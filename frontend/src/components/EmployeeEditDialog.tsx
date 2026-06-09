@@ -29,6 +29,8 @@ export default function EmployeeEditDialog({
     <Dialog
       open={open}
       onClose={onClose}
+      fullWidth
+      maxWidth={"sm"}
     >
       <DialogTitle>
         Edit Employee

@@ -1,7 +1,10 @@
 import type {Employee} from "../types/Employee";
 
-const BASE_URL =
-  "http://localhost:8490/api/employees";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ??
+  `${window.location.protocol}//${window.location.hostname}:8490`;
+
+const BASE_URL = new URL("/api/employees", API_BASE_URL).toString();
 
 export const employeeService = {
 

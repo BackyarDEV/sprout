@@ -1,5 +1,5 @@
 import type {Employee} from "../types/Employee";
-import {Button, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {Box, Button, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -22,9 +22,9 @@ export default function EmployeeTable({
 
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell align="center">Name</TableCell>
+            <TableCell align="center">Role</TableCell>
+            <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
 
@@ -65,7 +65,9 @@ export default function EmployeeTable({
                         onEdit(employee)
                       }
                     >
-                      Edit
+                      <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                        Edit
+                      </Box>
                     </Button>
 
                     <Button
@@ -76,7 +78,9 @@ export default function EmployeeTable({
                         onDelete(employee.id)
                       }
                     >
-                      Delete
+                      <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                        Delete
+                      </Box>
                     </Button>
 
                   </Stack>

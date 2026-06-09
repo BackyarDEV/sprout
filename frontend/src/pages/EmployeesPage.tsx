@@ -1,6 +1,6 @@
 import type {Employee} from "../types/Employee";
 import {useEffect, useState} from "react";
-import {Box, Container, Stack, TextField, Typography} from "@mui/material";
+import {Box, Container, Paper, TextField} from "@mui/material";
 import {employeeService} from "../services/employeeService.ts";
 import EmployeeTable from "../components/EmployeeTable";
 import EmployeeEditDialog from "../components/EmployeeEditDialog";
@@ -83,47 +83,37 @@ export default function EmployeesPage() {
   // Render
   return (
 
-    <Container maxWidth="md">
-      <Typography
-        variant="h3"
-        gutterBottom
-        sx={{mt: 4}}
-      >
-        Sprout Employee Management
-      </Typography>
-
-      <Box sx={{p: 3, mb: 3}}>
-        <Stack spacing={3}>
-
+    <Container maxWidth="sm">
+      <Paper elevation={12}>
+        <Box sx={{p: 3, mb: 3}}>
           <TextField
             label="Search Employees"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             fullWidth
           />
+        </Box>
+      </Paper>
 
-        </Stack>
-      </Box>
+      <Paper elevation={12}>
+        <EmployeeForm
+          name={name}
+          role={role}
+          onNameChange={setName}
+          onRoleChange={setRole}
+          onSubmit={addEmployee}
+        />
+      </Paper>
 
-      <EmployeeForm
-        name={name}
-        role={role}
-        onNameChange={setName}
-        onRoleChange={setRole}
-        onSubmit={addEmployee}
-      />
-
-      <Box sx={{p: 3}}>
-        <Stack spacing={3}>
-
+      <Paper elevation={12}>
+        <Box sx={{p: 3}}>
           <EmployeeTable
             employees={filteredEmployees}
             onEdit={openEditDialog}
             onDelete={deleteEmployee}
           />
-
-        </Stack>
-      </Box>
+        </Box>
+      </Paper>
 
       <EmployeeEditDialog
         open={editingEmployee !== null}
