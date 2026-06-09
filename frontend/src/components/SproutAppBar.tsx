@@ -109,11 +109,11 @@ export default function SproutAppBar({ mode, onToggleTheme }: SproutAppBarProps)
                     backgroundImage: 'none',
                     backgroundColor:
                         theme.palette.mode === 'dark'
-                            ? alpha('#1e1e1e', 0.88)
-                            : alpha('#c1bfbf', 0.88),
+                            ? alpha('#1e1010', 0.01)
+                            : alpha('#e8cece', 0.01),
                     color: theme.palette.text.primary,
-                    backdropFilter: 'blur(16px)',
-                    WebkitBackdropFilter: 'blur(16px)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
                     borderBottom: `1px solid ${
                         theme.palette.mode === 'dark'
                             ? alpha(theme.palette.common.white, 0.08)
