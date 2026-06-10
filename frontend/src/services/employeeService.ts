@@ -1,4 +1,4 @@
-import type {Employee} from "../types/Employee";
+import type {Employee, Skill} from "../types/Employee";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ??
@@ -58,6 +58,24 @@ export const employeeService = {
         body: JSON.stringify(employee)
       }
     );
+  },
+
+  async updateEmployeeSkills(
+    id: number,
+    skills: Skill[]
+  ): Promise<Employee> {
+    const response = await fetch(
+      `${BASE_URL}/${id}/skills`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(skills)
+      }
+    );
+
+    return response.json();
   },
 
 

@@ -3,7 +3,6 @@ import {useEffect, useState} from "react";
 import {Box, Container, Paper, TextField} from "@mui/material";
 import {employeeService} from "../services/employeeService.ts";
 import EmployeeTable from "../components/EmployeeTable";
-import EmployeeEditDialog from "../components/EmployeeEditDialog";
 import EmployeeForm from "../components/EmployeeForm";
 
 export default function EmployeesPage() {
@@ -47,31 +46,6 @@ export default function EmployeesPage() {
     setRole("");
   };
 
-  // Update Employee
-  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
-  const [editName, setEditName] = useState("");
-  const [editRole, setEditRole] = useState("");
-  const openEditDialog = (employee: Employee) => {
-    setEditingEmployee(employee);
-    setEditName(employee.name);
-    setEditRole(employee.role);
-  };
-  const saveEmployee = async () => {
-    if (!editingEmployee) {
-      return;
-    }
-
-    await employeeService.updateEmployee(
-      editingEmployee.id,
-      {
-        name: editName, role: editRole
-      }
-    );
-    await loadEmployees();
-
-    setEditingEmployee(null);
-  };
-
   // delete Employee
   const deleteEmployee = async (id: number) => {
 
@@ -83,7 +57,7 @@ export default function EmployeesPage() {
   // Render
   return (
 
-    <Container maxWidth="sm">
+    <Container maxWidth="md">
       <Paper elevation={12}>
         <Box sx={{p: 3, mb: 3}}>
           <TextField
@@ -105,25 +79,23 @@ export default function EmployeesPage() {
         />
       </Paper>
 
-      <Paper elevation={12}>
         <Box sx={{p: 3}}>
           <EmployeeTable
             employees={filteredEmployees}
-            onEdit={openEditDialog}
             onDelete={deleteEmployee}
+            onUpdateEmployee={async (employeeId, employee) => {
+              await employeeService.updateEmployee(employeeId, employee);
+              await loadEmployees();
+            }}
+            onUpdateSkills={async (employeeId, skills) => {
+              await employeeService.updateEmployeeSkills(
+                employeeId,
+                skills.map(skillName => ({ skillName }))
+              );
+              await loadEmployees();
+            }}
           />
         </Box>
-      </Paper>
-
-      <EmployeeEditDialog
-        open={editingEmployee !== null}
-        editName={editName}
-        editRole={editRole}
-        onNameChange={setEditName}
-        onRoleChange={setEditRole}
-        onSave={saveEmployee}
-        onClose={() => setEditingEmployee(null)}
-      />
 
     </Container>
 

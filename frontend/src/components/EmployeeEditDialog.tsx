@@ -74,7 +74,7 @@ export default function EmployeeEditDialog({
             helperText={
               editRole.trim().length > 0 &&
               editRole.trim().length < 2
-                ? "Minimum 5 characters"
+                ? "Minimum 2 characters"
                 : ""
             }
           />
