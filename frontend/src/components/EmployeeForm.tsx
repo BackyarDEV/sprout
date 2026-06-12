@@ -27,7 +27,7 @@ export default function EmployeeForm({
     team.trim().length >= 3;
 
   return (
-    <Paper sx={{ p: 3, mb: 3, bgcolor: 'primary.main' }}>
+    <Paper elevation={0} sx={{ p: 3, mb: 3, bgcolor: 'primary.main' }}>
 
       <Stack spacing={3}>
 

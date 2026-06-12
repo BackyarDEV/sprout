@@ -28,7 +28,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 interface EmployeeTableProps {
   employees: Employee[];
   onDelete: (id: number) => void;
-  onUpdateEmployee: (employeeId: number, employee: { name: string; role: string, team: string}) => Promise<void>;
+  onUpdateEmployee: (employeeId: number, employee: { name: string; role: string, team: string }) => Promise<void>;
   onUpdateSkills: (employeeId: number, skills: string[]) => Promise<void>;
 }
 
@@ -59,11 +59,12 @@ const chipLikeInputSx = {
   "& .MuiInputBase-root": {
     height: 32,
     borderRadius: 16,
-    fontSize: "0.8125rem"
+    fontSize: "0.875rem"
   },
   "& .MuiInputBase-input": {
     py: 0,
-    px: 1.25
+    px: 0,
+    textAlign: 'center'
   }
 };
 
@@ -558,20 +559,14 @@ export default function EmployeeTable({
 
   return (
     <TableContainer component={Paper} sx={{width: "100%", bgcolor: 'primary.main'}}>
-      <Table
-        sx={{
-          width: "100%",
-          borderCollapse: "separate",
-          borderSpacing: "0"
-        }}
-      >
+      <Table sx={{width: "100%", borderCollapse: "separate", borderSpacing: "0", tableLayout: 'fixed' }}>
         <TableHead>
           <TableRow>
-            <TableCell/>
-            <TableCell align="center">Name</TableCell>
-            <TableCell align="center">Role</TableCell>
-            <TableCell align="center">Team</TableCell>
-            <TableCell/>
+            <TableCell sx={{ width: 56 }} />
+            <TableCell align="center" sx={{ width: 220, minWidth: 220 }}>Name</TableCell>
+            <TableCell align="center" sx={{ width: 180, minWidth: 180 }}>Role</TableCell>
+            <TableCell align="center" sx={{ width: 160, minWidth: 160 }}>Team</TableCell>
+            <TableCell sx={{ width: 120, minWidth: 120 }} />
           </TableRow>
         </TableHead>
 
@@ -590,6 +585,7 @@ export default function EmployeeTable({
 
               return (
                 <Fragment key={employee.id}>
+                  {/*employee row*/}
                   <TableRow
                     sx={{
                       "& > td": {
@@ -605,6 +601,7 @@ export default function EmployeeTable({
                       }
                     }}
                   >
+                    {/*collapse button cell*/}
                     <TableCell sx={{width: 56}}>
                       <IconButton
                         size="small"
@@ -621,7 +618,8 @@ export default function EmployeeTable({
                       </IconButton>
                     </TableCell>
 
-                    <TableCell align="center">
+                    {/*name cell*/}
+                    <TableCell align="center" sx={{ width: 200, minWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "clip" }}>
                       {isEmployeeEditing ? (
                         <TextField
                           value={editingEmployeeName}
@@ -631,7 +629,7 @@ export default function EmployeeTable({
                           autoFocus
                           slotProps={{
                             input: {
-                              disableUnderline: true
+                              disableUnderline: false
                             }
                           }}
                           sx={chipLikeInputSx}
@@ -641,7 +639,8 @@ export default function EmployeeTable({
                       )}
                     </TableCell>
 
-                    <TableCell align="center">
+                    {/*role cell*/}
+                    <TableCell align="center" sx={{ width: 200, minWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "clip" }}>
                       {isEmployeeEditing ? (
                         <TextField
                           value={editingEmployeeRole}
@@ -650,7 +649,7 @@ export default function EmployeeTable({
                           placeholder="Role"
                           slotProps={{
                             input: {
-                              disableUnderline: true
+                              disableUnderline: false
                             }
                           }}
                           sx={chipLikeInputSx}
@@ -660,7 +659,8 @@ export default function EmployeeTable({
                       )}
                     </TableCell>
 
-                    <TableCell align="center">
+                    {/*team name cell*/}
+                    <TableCell align="center" sx={{ width: 100, minWidth: 100, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "clip" }}>
                       {isEmployeeEditing ? (
                         <TextField
                           value={editingEmployeeTeam}
@@ -669,7 +669,7 @@ export default function EmployeeTable({
                           placeholder="Team"
                           slotProps={{
                             input: {
-                              disableUnderline: true
+                              disableUnderline: false
                             }
                           }}
                           sx={chipLikeInputSx}
@@ -680,7 +680,7 @@ export default function EmployeeTable({
                     </TableCell>
 
                     {/*employee action buttons*/}
-                    <TableCell>
+                    <TableCell align="center" sx={{ width: 80, minWidth: 80 }}>
                       <Stack direction="row" spacing={1} sx={{justifyContent: "space-around"}}>
                         {isEmployeeEditing ? (
                           <>
@@ -706,29 +706,32 @@ export default function EmployeeTable({
                             </IconButton>
                           </>
                         ) : (
-                          <IconButton
-                            size="small"
-                            aria-label="Edit employee"
-                            onClick={() => beginEmployeeEdit(employee)}
-                            sx={plainIconButtonSx}
-                          >
-                            <EditIcon/>
-                          </IconButton>
-                        )}
+                          <>
+                            <IconButton
+                              size="small"
+                              aria-label="Edit employee"
+                              onClick={() => beginEmployeeEdit(employee)}
+                              sx={plainIconButtonSx}
+                            >
+                              <EditIcon/>
+                            </IconButton>
 
-                        <IconButton
-                          size="small"
-                          color="error"
-                          aria-label="Delete employee"
-                          onClick={() => onDelete(employee.id)}
-                          sx={plainIconButtonSx}
-                        >
-                          <DeleteIcon/>
-                        </IconButton>
+                            <IconButton
+                              size="small"
+                              color="error"
+                              aria-label="Delete employee"
+                              onClick={() => onDelete(employee.id)}
+                              sx={plainIconButtonSx}
+                            >
+                              <DeleteIcon/>
+                            </IconButton>
+                          </>
+                        )}
                       </Stack>
                     </TableCell>
                   </TableRow>
 
+                  {/*collapsible skills row*/}
                   <TableRow
                     sx={{
                       "& > td": {
