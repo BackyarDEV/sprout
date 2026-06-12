@@ -83,7 +83,7 @@ export default function EmployeesPage() {
           onSubmit={addEmployee}
         />
       </Paper>
-      <Box>
+      <Paper elevation={12}>
         <EmployeeTable
           employees={filteredEmployees}
           onDelete={deleteEmployee}
@@ -99,7 +99,7 @@ export default function EmployeesPage() {
             await loadEmployees();
           }}
         />
-      </Box>
+      </Paper>
     </Container>
 
   );
