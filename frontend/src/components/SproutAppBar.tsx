@@ -104,13 +104,10 @@ export default function SproutAppBar({ mode, onToggleTheme }: SproutAppBarProps)
         <Box>
             <AppBar
                 position="fixed"
-                elevation={24}
+                elevation={1}
                 sx={(theme) => ({
                     backgroundImage: 'none',
-                    backgroundColor:
-                        theme.palette.mode === 'dark'
-                            ? alpha('#1e1010', 0.01)
-                            : alpha('#e8cece', 0.01),
+                    backgroundColor: alpha(theme.palette.background.default, 0.1),
                     color: theme.palette.text.primary,
                     backdropFilter: 'blur(10px)',
                     WebkitBackdropFilter: 'blur(10px)',
@@ -122,6 +119,7 @@ export default function SproutAppBar({ mode, onToggleTheme }: SproutAppBarProps)
                 })}
             >
                 <Toolbar sx={{ position: 'relative' }}>
+                    <Box sx={{ flexGrow: 1 }} />
                     <IconButton
                         size="large"
                         edge="start"
@@ -140,6 +138,7 @@ export default function SproutAppBar({ mode, onToggleTheme }: SproutAppBarProps)
                         Sprout
                     </Typography>
 
+                    <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center' }}>
                         <Tooltip title={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}>
@@ -176,6 +175,8 @@ export default function SproutAppBar({ mode, onToggleTheme }: SproutAppBarProps)
                             <AccountCircle />
                         </IconButton>
                     </Box>
+
+                    <Box sx={{ flexGrow: 1 }} />
                 </Toolbar>
             </AppBar>
             {renderMobileMenu}

@@ -75,7 +75,8 @@ sprout/
 │   │   ├── components/
 │   │   │   ├── EmployeeForm.tsx
 │   │   │   ├── EmployeeTable.tsx
-│   │   │   └── EmployeeEditDialog.tsx
+│   │   │   ├── SproutAppBar.tsx
+│   │   │   └── SproutFooter.tsx
 │   │   │
 │   │   ├── pages/
 │   │   │   └── EmployeesPage.tsx

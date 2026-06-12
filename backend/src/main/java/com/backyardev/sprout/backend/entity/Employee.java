@@ -29,6 +29,8 @@ public class Employee {
 
     private String role;
 
+    private String team;
+
     @ManyToMany(
         cascade = {
             CascadeType.PERSIST,

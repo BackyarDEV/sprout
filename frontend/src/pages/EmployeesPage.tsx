@@ -33,20 +33,23 @@ export default function EmployeesPage() {
   // add Employee
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
+  const [team, setTeam] = useState("");
   const addEmployee = async () => {
 
     await employeeService.createEmployee({
       name,
-      role
+      role,
+      team
     });
 
     await loadEmployees();
 
     setName("");
     setRole("");
+    setTeam("");
   };
 
-  // delete Employee
+  //   delete Employee
   const deleteEmployee = async (id: number) => {
 
     await employeeService.deleteEmployee(id);
@@ -59,7 +62,7 @@ export default function EmployeesPage() {
 
     <Container maxWidth="md">
       <Paper elevation={12}>
-        <Box sx={{p: 3, mb: 3}}>
+        <Box sx={{p: 3, mb: 3, bgcolor: 'primary.main'}}>
           <TextField
             label="Search Employees"
             value={search}
@@ -73,12 +76,14 @@ export default function EmployeesPage() {
         <EmployeeForm
           name={name}
           role={role}
+          team={team}
           onNameChange={setName}
           onRoleChange={setRole}
+          onTeamChange={setTeam}
           onSubmit={addEmployee}
         />
       </Paper>
-
+      <Paper elevation={12}>
         <Box sx={{p: 3}}>
           <EmployeeTable
             employees={filteredEmployees}
@@ -96,7 +101,7 @@ export default function EmployeesPage() {
             }}
           />
         </Box>
-
+      </Paper>
     </Container>
 
   );

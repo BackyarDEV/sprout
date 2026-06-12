@@ -28,7 +28,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 interface EmployeeTableProps {
   employees: Employee[];
   onDelete: (id: number) => void;
-  onUpdateEmployee: (employeeId: number, employee: { name: string; role: string }) => Promise<void>;
+  onUpdateEmployee: (employeeId: number, employee: { name: string; role: string, team: string}) => Promise<void>;
   onUpdateSkills: (employeeId: number, skills: string[]) => Promise<void>;
 }
 
@@ -100,19 +100,21 @@ const plainIconButtonSx = {
 };
 
 export default function EmployeeTable({
-  employees,
-  onDelete,
-  onUpdateEmployee,
-  onUpdateSkills
-}: EmployeeTableProps) {
+                                        employees,
+                                        onDelete,
+                                        onUpdateEmployee,
+                                        onUpdateSkills
+                                      }: EmployeeTableProps) {
   const [manuallyExpandedEmployeeIds, setManuallyExpandedEmployeeIds] = useState<Set<number>>(new Set());
   const [manuallyCollapsedEmployeeIds, setManuallyCollapsedEmployeeIds] = useState<Set<number>>(new Set());
 
   const [editingEmployeeId, setEditingEmployeeId] = useState<number | null>(null);
   const [editingEmployeeName, setEditingEmployeeName] = useState("");
   const [editingEmployeeRole, setEditingEmployeeRole] = useState("");
+  const [editingEmployeeTeam, setEditingEmployeeTeam] = useState("");
   const [editingEmployeeOriginalName, setEditingEmployeeOriginalName] = useState("");
   const [editingEmployeeOriginalRole, setEditingEmployeeOriginalRole] = useState("");
+  const [editingEmployeeOriginalTeam, setEditingEmployeeOriginalTeam] = useState("");
 
   const [editingSkillsEmployeeId, setEditingSkillsEmployeeId] = useState<number | null>(null);
   const [draftSkillNames, setDraftSkillNames] = useState<string[]>([]);
@@ -171,8 +173,10 @@ export default function EmployeeTable({
     setEditingEmployeeId(employee.id);
     setEditingEmployeeName(employee.name);
     setEditingEmployeeRole(employee.role);
+    setEditingEmployeeTeam(employee.team);
     setEditingEmployeeOriginalName(employee.name);
     setEditingEmployeeOriginalRole(employee.role);
+    setEditingEmployeeOriginalTeam(employee.team);
     setEditingSkillsEmployeeId(null);
     setDraftSkillNames([]);
     setOriginalSkillNames([]);
@@ -188,21 +192,26 @@ export default function EmployeeTable({
 
     const nextName = editingEmployeeName.trim();
     const nextRole = editingEmployeeRole.trim();
+    const nextTeam = editingEmployeeTeam.trim();
     const originalName = editingEmployeeOriginalName.trim();
     const originalRole = editingEmployeeOriginalRole.trim();
+    const originalTeam = editingEmployeeOriginalTeam.trim();
 
-    if (nextName === originalName && nextRole === originalRole) {
+    if (nextName === originalName && nextRole === originalRole && nextTeam === originalTeam) {
       setEditingEmployeeId(null);
       setEditingEmployeeName("");
       setEditingEmployeeRole("");
+      setEditingEmployeeTeam("");
       setEditingEmployeeOriginalName("");
       setEditingEmployeeOriginalRole("");
+      setEditingEmployeeOriginalTeam("");
       return;
     }
 
     await onUpdateEmployee(employee.id, {
       name: nextName,
-      role: nextRole
+      role: nextRole,
+      team: nextTeam
     });
 
     setEditingEmployeeId(null);
@@ -210,6 +219,7 @@ export default function EmployeeTable({
     setEditingEmployeeRole("");
     setEditingEmployeeOriginalName("");
     setEditingEmployeeOriginalRole("");
+    setEditingEmployeeOriginalTeam("");
   };
 
   const cancelEmployeeEdit = () => {
@@ -290,7 +300,8 @@ export default function EmployeeTable({
 
   const isEmployeeEditValid = () =>
     editingEmployeeName.trim().length >= 3 &&
-    editingEmployeeRole.trim().length >= 2;
+    editingEmployeeRole.trim().length >= 2 &&
+    editingEmployeeTeam.trim().length >= 3;
 
   const confirmSkills = async (employee: Employee) => {
     const committedSkills = normalizeSkillNames([
@@ -333,9 +344,9 @@ export default function EmployeeTable({
   };
 
   const renderSkillContent = (employee: Employee) => {
-    const activeEmployee = editingSkillsEmployeeId === employee.id;
+    const employeeBeingEdited = editingSkillsEmployeeId === employee.id;
 
-    const skillNames = activeEmployee
+    const skillNames = employeeBeingEdited
       ? draftSkillNames
       : normalizeSkillNames(
         (employee.skills ?? []).map(skill => skill.skillName)
@@ -348,10 +359,10 @@ export default function EmployeeTable({
             display: "flex",
             alignItems: "flex-start",
             justifyContent: "space-between",
-            gap: 2
+            gap: 8
           }}
         >
-          <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Box sx={{flex: 1, minWidth: 0}}>
             {skillNames.length === 0 ? (
               <Typography variant="body2" color="text.secondary">
                 No skills added
@@ -368,7 +379,7 @@ export default function EmployeeTable({
               >
                 {skillNames.map(skill => {
                   const isChipBeingEdited =
-                    activeEmployee &&
+                    employeeBeingEdited &&
                     editingSkillKey?.toLowerCase() === skill.toLowerCase();
 
                   if (isChipBeingEdited) {
@@ -433,7 +444,7 @@ export default function EmployeeTable({
                           onClick={() => deleteSkill(skill)}
                           sx={chipLikeIconButtonSx}
                         >
-                          <DeleteIcon fontSize="small" />
+                          <DeleteIcon fontSize="small"/>
                         </IconButton>
                       </Box>
                     );
@@ -445,14 +456,14 @@ export default function EmployeeTable({
                       label={skill}
                       size="small"
                       variant="outlined"
-                      clickable={activeEmployee}
+                      clickable={employeeBeingEdited}
                       onClick={
-                        activeEmployee
+                        employeeBeingEdited
                           ? () => startChipEdit(skill)
                           : undefined
                       }
                       onDelete={
-                        activeEmployee
+                        employeeBeingEdited
                           ? () => deleteSkill(skill)
                           : undefined
                       }
@@ -463,41 +474,51 @@ export default function EmployeeTable({
             )}
           </Box>
 
-          {activeEmployee ? (
-            <Stack direction="row" spacing={0.5}>
-              <IconButton
-                size="small"
-                onClick={() => {
-                  void confirmSkills(employee);
-                }}
-                aria-label="Confirm skills changes"
-                sx={chipLikeIconButtonSx}
-              >
-                <CheckIcon />
-              </IconButton>
 
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              gap: 0
+            }}
+          >
+            {employeeBeingEdited ? (
+              <Stack direction="row" spacing={0.5}>
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    void confirmSkills(employee);
+                  }}
+                  aria-label="Confirm skills changes"
+                  sx={chipLikeIconButtonSx}
+                >
+                  <CheckIcon/>
+                </IconButton>
+
+                <IconButton
+                  size="small"
+                  onClick={cancelSkillsEdit}
+                  aria-label="Cancel skills changes"
+                  sx={chipLikeIconButtonSx}
+                >
+                  <CloseIcon/>
+                </IconButton>
+              </Stack>
+            ) : (
               <IconButton
                 size="small"
-                onClick={cancelSkillsEdit}
-                aria-label="Cancel skills changes"
+                onClick={() => beginSkillEdit(employee)}
+                aria-label="Edit skills"
                 sx={chipLikeIconButtonSx}
               >
-                <CloseIcon />
+                <EditIcon/>
               </IconButton>
-            </Stack>
-          ) : (
-            <IconButton
-              size="small"
-              onClick={() => beginSkillEdit(employee)}
-              aria-label="Edit skills"
-              sx={chipLikeIconButtonSx}
-            >
-              <EditIcon />
-            </IconButton>
-          )}
+            )}
+          </Box>
         </Box>
 
-        {activeEmployee && (
+        {employeeBeingEdited && (
           <Stack
             direction="row"
             spacing={1}
@@ -523,7 +544,7 @@ export default function EmployeeTable({
 
             <Button
               variant="outlined"
-              startIcon={<AddIcon />}
+              startIcon={<AddIcon/>}
               onClick={addSkill}
               sx={chipLikeButtonSx}
             >
@@ -536,7 +557,7 @@ export default function EmployeeTable({
   };
 
   return (
-    <TableContainer component={Paper} sx={{ width: "100%" }}>
+    <TableContainer component={Paper} sx={{width: "100%", bgcolor: 'primary.main'}}>
       <Table
         sx={{
           width: "100%",
@@ -546,17 +567,18 @@ export default function EmployeeTable({
       >
         <TableHead>
           <TableRow>
-            <TableCell />
+            <TableCell/>
             <TableCell align="center">Name</TableCell>
             <TableCell align="center">Role</TableCell>
-            <TableCell align="center">Actions</TableCell>
+            <TableCell align="center">Team</TableCell>
+            <TableCell/>
           </TableRow>
         </TableHead>
 
         <TableBody>
           {employees.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4} align="center">
+              <TableCell colSpan={5} align="center">
                 No employees found
               </TableCell>
             </TableRow>
@@ -583,7 +605,7 @@ export default function EmployeeTable({
                       }
                     }}
                   >
-                    <TableCell sx={{ width: 56 }}>
+                    <TableCell sx={{width: 56}}>
                       <IconButton
                         size="small"
                         onClick={() => toggleExpanded(employee)}
@@ -638,8 +660,28 @@ export default function EmployeeTable({
                       )}
                     </TableCell>
 
+                    <TableCell align="center">
+                      {isEmployeeEditing ? (
+                        <TextField
+                          value={editingEmployeeTeam}
+                          onChange={(e) => setEditingEmployeeTeam(e.target.value)}
+                          variant="standard"
+                          placeholder="Team"
+                          slotProps={{
+                            input: {
+                              disableUnderline: true
+                            }
+                          }}
+                          sx={chipLikeInputSx}
+                        />
+                      ) : (
+                        employee.team
+                      )}
+                    </TableCell>
+
+                    {/*employee action buttons*/}
                     <TableCell>
-                      <Stack direction="row" spacing={1} sx={{ justifyContent: "center" }}>
+                      <Stack direction="row" spacing={1} sx={{justifyContent: "space-around"}}>
                         {isEmployeeEditing ? (
                           <>
                             <IconButton
@@ -651,7 +693,7 @@ export default function EmployeeTable({
                               disabled={!employeeEditValid}
                               sx={plainIconButtonSx}
                             >
-                              <CheckIcon />
+                              <CheckIcon/>
                             </IconButton>
 
                             <IconButton
@@ -660,7 +702,7 @@ export default function EmployeeTable({
                               onClick={cancelEmployeeEdit}
                               sx={plainIconButtonSx}
                             >
-                              <CloseIcon />
+                              <CloseIcon/>
                             </IconButton>
                           </>
                         ) : (
@@ -670,7 +712,7 @@ export default function EmployeeTable({
                             onClick={() => beginEmployeeEdit(employee)}
                             sx={plainIconButtonSx}
                           >
-                            <EditIcon />
+                            <EditIcon/>
                           </IconButton>
                         )}
 
@@ -681,7 +723,7 @@ export default function EmployeeTable({
                           onClick={() => onDelete(employee.id)}
                           sx={plainIconButtonSx}
                         >
-                          <DeleteIcon />
+                          <DeleteIcon/>
                         </IconButton>
                       </Stack>
                     </TableCell>
@@ -695,11 +737,11 @@ export default function EmployeeTable({
                       }
                     }}
                   >
-                    <TableCell colSpan={4}>
+                    <TableCell colSpan={5}>
                       <Collapse in={expanded} timeout="auto" unmountOnExit>
                         <Box
                           sx={{
-                            px: 6,
+                            px: 4,
                             py: 2
                           }}
                         >

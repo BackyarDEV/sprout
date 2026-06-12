@@ -35,6 +35,7 @@ public class EmployeeService {
         var existing = repository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
         existing.setName(employee.getName());
         existing.setRole(employee.getRole());
+        existing.setTeam(employee.getTeam());
         repository.save(existing);
     }
 
