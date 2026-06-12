@@ -83,25 +83,23 @@ export default function EmployeesPage() {
           onSubmit={addEmployee}
         />
       </Paper>
-      <Paper elevation={12}>
-        <Box sx={{p: 3}}>
-          <EmployeeTable
-            employees={filteredEmployees}
-            onDelete={deleteEmployee}
-            onUpdateEmployee={async (employeeId, employee) => {
-              await employeeService.updateEmployee(employeeId, employee);
-              await loadEmployees();
-            }}
-            onUpdateSkills={async (employeeId, skills) => {
-              await employeeService.updateEmployeeSkills(
-                employeeId,
-                skills.map(skillName => ({ skillName }))
-              );
-              await loadEmployees();
-            }}
-          />
-        </Box>
-      </Paper>
+      <Box>
+        <EmployeeTable
+          employees={filteredEmployees}
+          onDelete={deleteEmployee}
+          onUpdateEmployee={async (employeeId, employee) => {
+            await employeeService.updateEmployee(employeeId, employee);
+            await loadEmployees();
+          }}
+          onUpdateSkills={async (employeeId, skills) => {
+            await employeeService.updateEmployeeSkills(
+              employeeId,
+              skills.map(skillName => ({ skillName }))
+            );
+            await loadEmployees();
+          }}
+        />
+      </Box>
     </Container>
 
   );
