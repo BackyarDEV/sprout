@@ -1,0 +1,22 @@
+info:
+  name: Add Employee
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseURL}}/employees"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "botn0ught",
+        "role": "Developer Lead"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

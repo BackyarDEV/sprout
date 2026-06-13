@@ -1,0 +1,19 @@
+info:
+  name: Fetch Roles by Name
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseURL}}/roles/:role"
+  params:
+    - name: role
+      value: Software Engineer I
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

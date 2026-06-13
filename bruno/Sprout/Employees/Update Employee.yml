@@ -1,0 +1,40 @@
+info:
+  name: Update Employee
+  type: http
+  seq: 1
+
+http:
+  method: PUT
+  url: "{{baseURL}}/employees/:id"
+  params:
+    - name: id
+      value: "1"
+      type: path
+  body:
+    type: json
+    data: |2-
+        {
+          "name": "BackyarDev",
+          "role": {
+            "id": 1,
+            "role": "Software Engineer Lead"
+          },
+          "skills": [
+            {
+              "id": 1,
+              "skillName": "Java"
+            },
+            {
+              "id": 5,
+              "skillName": "Javascript"
+            }
+          ],
+          "team": "Unemployed"
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
