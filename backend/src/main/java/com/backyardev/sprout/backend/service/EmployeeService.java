@@ -1,8 +1,10 @@
 package com.backyardev.sprout.backend.service;
 
 import com.backyardev.sprout.backend.entity.Employee;
+import com.backyardev.sprout.backend.entity.EmployeeRole;
 import com.backyardev.sprout.backend.entity.Skill;
 import com.backyardev.sprout.backend.repository.EmployeeRepository;
+import com.backyardev.sprout.backend.repository.EmployeeRoleRepository;
 import com.backyardev.sprout.backend.repository.SkillRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,34 +17,35 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class EmployeeService {
 
-    private final EmployeeRepository repository;
+    private final EmployeeRepository employeeRepository;
     private final SkillRepository skillRepository;
+    private final EmployeeRoleRepository employeeRoleRepository;
 
     public List<Employee> getAll() {
-        return repository.findAll();
+        return employeeRepository.findAll();
     }
 
     public Employee save(Employee employee) {
         employee.setSkills(resolveSkills(employee.getSkills()));
-        return repository.save(employee);
+        return employeeRepository.save(employee);
     }
 
     public void delete(Long id) {
-        repository.deleteById(id);
+        employeeRepository.deleteById(id);
     }
 
     public void update(Long id, Employee employee) {
-        var existing = repository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+        var existing = employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
         existing.setName(employee.getName());
         existing.setRole(employee.getRole());
         existing.setTeam(employee.getTeam());
-        repository.save(existing);
+        employeeRepository.save(existing);
     }
 
     public Employee updateSkills(Long id, Set<Skill> requestedSkills) {
-        var existing = repository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+        var existing = employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
         existing.setSkills(resolveSkills(requestedSkills));
-        return repository.save(existing);
+        return employeeRepository.save(existing);
     }
 
     private Set<Skill> resolveSkills(Set<Skill> requestedSkills) {
@@ -79,5 +82,18 @@ public class EmployeeService {
         }
 
         return resolvedSkills;
+    }
+
+    public List<EmployeeRole> getRoles() {
+        return employeeRoleRepository.findAll();
+    }
+
+    public EmployeeRole getRoleByName(String role) {
+        return employeeRoleRepository.findByRoleIgnoreCase(role)
+            .orElseThrow(() -> new RuntimeException("Role not found: " + role));
+    }
+
+    public EmployeeRole addRole(EmployeeRole role) {
+        return employeeRoleRepository.save(role);
     }
 }

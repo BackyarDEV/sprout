@@ -1,10 +1,11 @@
-import type {Employee, Skill} from "../types/Employee";
+import type {Employee, Skill, EmployeeRole} from "../types/Employee";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ??
   `${window.location.protocol}//${window.location.hostname}:8490`;
 
 const BASE_URL = new URL("/api/employees", API_BASE_URL).toString();
+const ROLES_URL = new URL("/api/roles", API_BASE_URL).toString();
 
 export const employeeService = {
 
@@ -58,6 +59,11 @@ export const employeeService = {
         body: JSON.stringify(employee)
       }
     );
+  },
+
+  async getEmployeeRoles(): Promise<EmployeeRole[]> {
+    const response = await fetch(ROLES_URL);
+    return response.json();
   },
 
   async updateEmployeeSkills(

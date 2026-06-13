@@ -1,15 +1,6 @@
 package com.backyardev.sprout.backend.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -27,7 +18,16 @@ public class Employee {
 
     private String name;
 
-    private String role;
+    @ManyToOne()
+    @JoinTable(
+            name = "employee_role_links",
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id", "role_id"})
+    )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private EmployeeRole role;
 
     private String team;
 

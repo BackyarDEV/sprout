@@ -38,7 +38,7 @@ export default function EmployeesPage() {
 
     await employeeService.createEmployee({
       name,
-      role,
+      role: role ? { role } : undefined,
       team
     });
 

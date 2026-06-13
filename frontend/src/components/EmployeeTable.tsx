@@ -1,5 +1,5 @@
-import {Fragment, useState} from "react";
-import type {Employee} from "../types/Employee";
+import {Fragment, useState, useEffect} from "react";
+import type {Employee, EmployeeRole} from "../types/Employee";
 import {
   Box,
   Button,
@@ -15,7 +15,8 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography
+  Typography,
+  MenuItem
 } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
@@ -25,10 +26,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
+import {employeeService} from "../services/employeeService.ts";
+
 interface EmployeeTableProps {
   employees: Employee[];
   onDelete: (id: number) => void;
-  onUpdateEmployee: (employeeId: number, employee: { name: string; role: string, team: string }) => Promise<void>;
+  onUpdateEmployee: (employeeId: number, employee: Omit<Employee, "id">) => Promise<void>;
   onUpdateSkills: (employeeId: number, skills: string[]) => Promise<void>;
 }
 
@@ -100,6 +103,38 @@ const plainIconButtonSx = {
   }
 };
 
+const roleMenuItemSx = {
+  bgcolor: 'primary.dark',
+  '&.Mui-selected': { bgcolor: 'secondary.main', color: 'common.white' },
+  '&.Mui-selected:hover': { bgcolor: 'primary.main' },
+  '&:hover': { bgcolor: 'action.hover' }
+};
+
+const slotProps = {
+  select: {
+    MenuProps: {
+      slotProps: {
+        paper: {
+          sx: {
+            maxHeight: 48 * 4,
+
+            bgcolor: '#222',
+            '& .MuiMenuItem-root': {
+              color: '#fff',
+            },
+            '& .MuiMenuItem-root:hover': {
+              bgcolor: '#333',
+            },
+            '& .Mui-selected': {
+              bgcolor: '#444 !important',
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 export default function EmployeeTable({
                                         employees,
                                         onDelete,
@@ -123,6 +158,24 @@ export default function EmployeeTable({
   const [editingSkillKey, setEditingSkillKey] = useState<string | null>(null);
   const [editingSkillDraft, setEditingSkillDraft] = useState("");
   const [newSkill, setNewSkill] = useState("");
+
+  const [roles, setRoles] = useState<EmployeeRole[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      try {
+        const list = await employeeService.getEmployeeRoles();
+        if (mounted) setRoles(list);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (err : unknown) {
+        // ignore
+      }
+    })();
+
+    return () => { mounted = false; };
+  }, []);
 
   const isExpanded = (employee: Employee) => {
     const hasSkills = (employee.skills ?? []).length > 0;
@@ -173,10 +226,10 @@ export default function EmployeeTable({
   const beginEmployeeEdit = (employee: Employee) => {
     setEditingEmployeeId(employee.id);
     setEditingEmployeeName(employee.name);
-    setEditingEmployeeRole(employee.role);
+    setEditingEmployeeRole(employee.role?.role ?? "");
     setEditingEmployeeTeam(employee.team);
     setEditingEmployeeOriginalName(employee.name);
-    setEditingEmployeeOriginalRole(employee.role);
+    setEditingEmployeeOriginalRole(employee.role?.role ?? "");
     setEditingEmployeeOriginalTeam(employee.team);
     setEditingSkillsEmployeeId(null);
     setDraftSkillNames([]);
@@ -209,9 +262,10 @@ export default function EmployeeTable({
       return;
     }
 
+    const roleObj = nextRole ? roles.find(r => r.role === nextRole) : undefined;
     await onUpdateEmployee(employee.id, {
       name: nextName,
-      role: nextRole,
+      role: roleObj,
       team: nextTeam
     });
 
@@ -582,7 +636,6 @@ export default function EmployeeTable({
               const expanded = isExpanded(employee);
               const isEmployeeEditing = editingEmployeeId === employee.id;
               const employeeEditValid = isEmployeeEditValid();
-
               return (
                 <Fragment key={employee.id}>
                   {/*employee row*/}
@@ -643,19 +696,22 @@ export default function EmployeeTable({
                     <TableCell align="center" sx={{ width: 200, minWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "clip" }}>
                       {isEmployeeEditing ? (
                         <TextField
+                          select
                           value={editingEmployeeRole}
-                          onChange={(e) => setEditingEmployeeRole(e.target.value)}
+                          onChange={(e) => setEditingEmployeeRole(e.target.value as string)}
                           variant="standard"
-                          placeholder="Role"
-                          slotProps={{
-                            input: {
-                              disableUnderline: false
-                            }
-                          }}
                           sx={chipLikeInputSx}
-                        />
+                          slotProps={slotProps}
+                        >
+                          <MenuItem value="" sx={roleMenuItemSx}>Select Role</MenuItem>
+                          {roles.map(r => (
+                            <MenuItem key={r.id ?? r.role} value={r.role} sx={roleMenuItemSx}>
+                              {r.role}
+                            </MenuItem>
+                          ))}
+                        </TextField>
                       ) : (
-                        employee.role
+                        employee.role?.role
                       )}
                     </TableCell>
 
