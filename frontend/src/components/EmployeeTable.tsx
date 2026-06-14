@@ -107,9 +107,20 @@ const plainIconButtonSx = {
 
 const roleMenuItemSx = {
   bgcolor: 'primary.dark',
-  '&.Mui-selected': { bgcolor: 'secondary.main', color: 'common.white' },
-  '&.Mui-selected:hover': { bgcolor: 'primary.main' },
-  '&:hover': { bgcolor: 'action.hover' }
+  color: 'primary.contrastText',
+
+  '&.Mui-selected': {
+    bgcolor: 'secondary.main',
+    color: 'secondary.contrastText',
+  },
+
+  '&.Mui-selected:hover': {
+    bgcolor: 'secondary.main',
+  },
+
+  '&:hover': {
+    bgcolor: 'action.hover',
+  },
 };
 
 const slotProps = {

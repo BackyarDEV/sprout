@@ -55,31 +55,31 @@ export const getTheme = (mode: ThemeMode) =>
                 ? {
                     mode,
                     primary: {
-                        main: "#fef7f0",
+                        main: "#e7f8e9",
                         contrastText: "#000000",
                     },
                     secondary: {
-                        main: "#ff6b35",
+                        main: "#002b2b",
                         contrastText: "#ffffff",
                     },
                     background: {
-                        default: "#ffffff",
-                        paper: "#ffffff",
+                        default: "#fef7f0",
+                        paper: "#fef7f0",
                     },
                 }
                 : {
                     mode,
                     primary: {
-                        main: "#2d1f0f",
+                        main: "#002b2b",
                         contrastText: "#ffffff",
                     },
                     secondary: {
-                        main: "#ff8c42",
-                        contrastText: "#ffffff",
+                        main: "#e7f8e9",
+                        contrastText: "#000000",
                     },
                     background: {
-                        default: "#1a1a1a",
-                        paper: "#1e1e1e",
+                        default: "#1b1f23",
+                        paper: "#1b1f23",
                     },
                 }
         ),

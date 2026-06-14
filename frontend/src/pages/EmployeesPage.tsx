@@ -61,7 +61,7 @@ export default function EmployeesPage() {
   return (
 
     <Container maxWidth="md">
-      <Paper elevation={12}>
+      <Paper elevation={4}>
         <Box sx={{p: 3, mb: 3, bgcolor: 'primary.main'}}>
           <TextField
             label="Search Employees"
@@ -72,7 +72,7 @@ export default function EmployeesPage() {
         </Box>
       </Paper>
 
-      <Paper elevation={12}>
+      <Paper elevation={4}>
         <EmployeeForm
           name={name}
           role={role}
@@ -83,7 +83,7 @@ export default function EmployeesPage() {
           onSubmit={addEmployee}
         />
       </Paper>
-      <Paper elevation={12}>
+      <Paper elevation={4}>
         <EmployeeTable
           employees={filteredEmployees}
           onDelete={deleteEmployee}

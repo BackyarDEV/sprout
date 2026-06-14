@@ -45,7 +45,7 @@ export default function SproutAppBar({mode, onToggleTheme}: SproutAppBarProps) {
 
   return (
     <Box>
-      <AppBar position="fixed" elevation={3} sx={(theme) => ({
+      <AppBar position="fixed" elevation={12} sx={(theme) => ({
         backgroundImage: 'none',
         backgroundColor: alpha(theme.palette.background.default, 0.1),
         color: theme.palette.text.primary,
@@ -59,18 +59,20 @@ export default function SproutAppBar({mode, onToggleTheme}: SproutAppBarProps) {
       })}>
         <Toolbar sx={{position: 'relative'}}>
 
-          {/*free space*/}
-          <Box sx={{display: {sm: 'none', md: 'flex'}, flexGrow: 1}}/>
+          {/*/!*free space*!/*/}
+          <Box sx={{display: {xs: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex'}, flexGrow: 1}}/>
 
           {/*drawer icon*/}
           <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{mr: 2}}>
             <MenuIcon/>
           </IconButton>
 
+          {/*free space*/}
+          <Box sx={{flexGrow: 2}}/>
+
           {/*logo*/}
           <Typography variant="h6" noWrap component="a" href="/" sx={{
             mr: 2,
-            display: {xs: 'none', md: 'flex'},
             fontFamily: 'monospace',
             fontWeight: 700,
             letterSpacing: '.3rem',
@@ -81,9 +83,7 @@ export default function SproutAppBar({mode, onToggleTheme}: SproutAppBarProps) {
           </Typography>
 
           {/*free space*/}
-          <Box sx={{flexGrow: 1}}/>
-          {/*free space*/}
-          <Box sx={{flexGrow: 1}}/>
+          <Box sx={{flexGrow: 2}}/>
 
           {/*theme switch*/}
           <Box sx={{display: "flex", alignItems: "center"}}>
@@ -142,7 +142,7 @@ export default function SproutAppBar({mode, onToggleTheme}: SproutAppBarProps) {
           </Box>
 
           {/*free space*/}
-          <Box sx={{display: {sm: 'none', md: 'flex'}, flexGrow: 1}}/>
+          <Box sx={{display: {xs: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex'}, flexGrow: 1}}/>
 
         </Toolbar>
       </AppBar>
