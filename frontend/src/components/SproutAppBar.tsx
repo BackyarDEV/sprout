@@ -6,181 +6,147 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import { alpha } from '@mui/material/styles';
+import {alpha} from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MoreIcon from '@mui/icons-material/MoreVert';
 import type {ThemeMode} from "../theme/theme.ts";
 import Tooltip from "@mui/material/Tooltip";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
+import SunnyIcon from '@mui/icons-material/Sunny';
+import NightsStayIcon from '@mui/icons-material/NightsStay';
 
 
 type SproutAppBarProps = {
-    mode: ThemeMode;
-    onToggleTheme: () => void;
+  mode: ThemeMode;
+  onToggleTheme: () => void;
 };
 
-export default function SproutAppBar({ mode, onToggleTheme }: SproutAppBarProps) {
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-        React.useState<null | HTMLElement>(null);
+export default function SproutAppBar({mode, onToggleTheme}: SproutAppBarProps) {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-    const isMenuOpen = Boolean(anchorEl);
-    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const isMenuOpen = Boolean(anchorEl);
 
-    const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    const handleMobileMenuClose = () => {
-        setMobileMoreAnchorEl(null);
-    };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-        handleMobileMenuClose();
-    };
+  const menuId = 'sprout-profile-menu';
+  const renderMenu = (
+    <Menu sx={{mt: '45px'}} anchorEl={anchorEl} open={isMenuOpen} onClose={handleMenuClose} id={menuId} keepMounted
+      anchorOrigin={{ vertical: 'top', horizontal: 'right',}}
+      transformOrigin={{vertical: 'top', horizontal: 'right',}}
+    >
+      <MenuItem sx={(theme) => ({bgcolor: theme.palette.background.default})} onClick={handleMenuClose}>Login</MenuItem>
+    </Menu>
+  );
 
-    const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setMobileMoreAnchorEl(event.currentTarget);
-    };
+  return (
+    <Box>
+      <AppBar position="fixed" elevation={3} sx={(theme) => ({
+        backgroundImage: 'none',
+        backgroundColor: alpha(theme.palette.background.default, 0.1),
+        color: theme.palette.text.primary,
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        borderBottom: `1px solid ${
+          theme.palette.mode === 'dark'
+            ? alpha(theme.palette.common.white, 0.08)
+            : alpha(theme.palette.common.black, 0.08)
+        }`,
+      })}>
+        <Toolbar sx={{position: 'relative'}}>
 
-    const menuId = 'primary-search-account-menu';
-    const renderMenu = (
-        <Menu
-            anchorEl={anchorEl}
-            anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            id={menuId}
-            keepMounted
-            transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            open={isMenuOpen}
-            onClose={handleMenuClose}
-        >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-        </Menu>
-    );
+          {/*free space*/}
+          <Box sx={{display: {sm: 'none', md: 'flex'}, flexGrow: 1}}/>
 
-    const mobileMenuId = 'primary-search-account-menu-mobile';
-    const renderMobileMenu = (
-        <Menu
-            anchorEl={mobileMoreAnchorEl}
-            anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            id={mobileMenuId}
-            keepMounted
-            transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            open={isMobileMenuOpen}
-            onClose={handleMobileMenuClose}
-        >
-            <MenuItem onClick={handleProfileMenuOpen}>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                >
-                    <AccountCircle />
-                </IconButton>
-                <p>Profile</p>
-            </MenuItem>
-        </Menu>
-    );
+          {/*drawer icon*/}
+          <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{mr: 2}}>
+            <MenuIcon/>
+          </IconButton>
 
-    return (
-        <Box>
-            <AppBar
-                position="fixed"
-                elevation={1}
-                sx={(theme) => ({
-                    backgroundImage: 'none',
-                    backgroundColor: alpha(theme.palette.background.default, 0.1),
-                    color: theme.palette.text.primary,
-                    backdropFilter: 'blur(10px)',
-                    WebkitBackdropFilter: 'blur(10px)',
-                    borderBottom: `1px solid ${
-                        theme.palette.mode === 'dark'
-                            ? alpha(theme.palette.common.white, 0.08)
-                            : alpha(theme.palette.common.black, 0.08)
-                    }`,
-                })}
+          {/*logo*/}
+          <Typography variant="h6" noWrap component="a" href="/" sx={{
+            mr: 2,
+            display: {xs: 'none', md: 'flex'},
+            fontFamily: 'monospace',
+            fontWeight: 700,
+            letterSpacing: '.3rem',
+            color: 'inherit',
+            textDecoration: 'none',
+          }}>
+            Sprout
+          </Typography>
+
+          {/*free space*/}
+          <Box sx={{flexGrow: 1}}/>
+          {/*free space*/}
+          <Box sx={{flexGrow: 1}}/>
+
+          {/*theme switch*/}
+          <Box sx={{display: "flex", alignItems: "center"}}>
+            <Tooltip
+              title={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
             >
-                <Toolbar sx={{ position: 'relative' }}>
-                    <Box sx={{ flexGrow: 1 }} />
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="open drawer"
-                        sx={{ mr: 2 }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="div"
-                        sx={{ display: { sm: 'block' }, color: 'inherit' }}
-                    >
-                        Sprout
-                    </Typography>
+              <Box
+                onClick={onToggleTheme}
+                sx={{
+                  mr: 1,
+                  width: 52,
+                  height: 28,
+                  borderRadius: 14,
+                  bgcolor: mode === "dark" ? "grey.800" : "grey.300",
+                  cursor: "pointer",
+                  position: "relative",
+                  transition: "all 0.3s ease",
+                }}
+              >
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 2,
+                    left: mode === "dark" ? 26 : 2,
+                    width: 24,
+                    height: 24,
+                    borderRadius: "50%",
+                    bgcolor: "background.paper",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: 1,
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  {mode === "dark" ? (
+                    <NightsStayIcon sx={{fontSize: 16}}/>
+                  ) : (
+                    <SunnyIcon sx={{fontSize: 16}}/>
+                  )}
+                </Box>
+              </Box>
+            </Tooltip>
 
-                    <Box sx={{ flexGrow: 1 }} />
-                    <Box sx={{ flexGrow: 1 }} />
-                    <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center' }}>
-                        <Tooltip title={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}>
-                            <IconButton onClick={onToggleTheme} sx={{ mr: 1 }} color="inherit">
-                                {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-                            </IconButton>
-                        </Tooltip>
-                        <IconButton
-                            size="large"
-                            aria-label="show more"
-                            aria-controls={mobileMenuId}
-                            aria-haspopup="true"
-                            onClick={handleMobileMenuOpen}
-                            color="inherit"
-                        >
-                            <MoreIcon />
-                        </IconButton>
-                    </Box>
-                    <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <Tooltip title={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}>
-                            <IconButton onClick={onToggleTheme} sx={{ mr: 1 }} color="inherit">
-                                {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-                            </IconButton>
-                        </Tooltip>
-                        <IconButton
-                            size="large"
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            <AccountCircle />
-                        </IconButton>
-                    </Box>
+            <IconButton
+              size="large"
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="inherit"
+            >
+              <AccountCircle/>
+            </IconButton>
+          </Box>
 
-                    <Box sx={{ flexGrow: 1 }} />
-                </Toolbar>
-            </AppBar>
-            {renderMobileMenu}
-            {renderMenu}
-        </Box>
-    );
+          {/*free space*/}
+          <Box sx={{display: {sm: 'none', md: 'flex'}, flexGrow: 1}}/>
+
+        </Toolbar>
+      </AppBar>
+      {renderMenu}
+    </Box>
+  );
 }

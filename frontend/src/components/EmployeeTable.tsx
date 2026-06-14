@@ -75,9 +75,11 @@ const chipLikeButtonSx = {
   height: 32,
   minHeight: 32,
   borderRadius: 16,
-  px: 1.5,
+  pl: 1.5,
+  pr: 2,
   textTransform: "none",
-  whiteSpace: "nowrap"
+  whiteSpace: "nowrap",
+  color: "primary.main",
 };
 
 const chipLikeIconButtonSx = {
@@ -417,6 +419,7 @@ export default function EmployeeTable({
             gap: 8
           }}
         >
+          {/*skill chip box*/}
           <Box sx={{flex: 1, minWidth: 0}}>
             {skillNames.length === 0 ? (
               <Typography variant="body2" color="text.secondary">
@@ -528,61 +531,11 @@ export default function EmployeeTable({
               </Stack>
             )}
           </Box>
-
-
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "space-between",
-              gap: 0
-            }}
-          >
-            {employeeBeingEdited ? (
-              <Stack direction="row" spacing={0.5}>
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    void confirmSkills(employee);
-                  }}
-                  aria-label="Confirm skills changes"
-                  sx={chipLikeIconButtonSx}
-                >
-                  <CheckIcon/>
-                </IconButton>
-
-                <IconButton
-                  size="small"
-                  onClick={cancelSkillsEdit}
-                  aria-label="Cancel skills changes"
-                  sx={chipLikeIconButtonSx}
-                >
-                  <CloseIcon/>
-                </IconButton>
-              </Stack>
-            ) : (
-              <IconButton
-                size="small"
-                onClick={() => beginSkillEdit(employee)}
-                aria-label="Edit skills"
-                sx={chipLikeIconButtonSx}
-              >
-                <EditIcon/>
-              </IconButton>
-            )}
-          </Box>
         </Box>
 
         {employeeBeingEdited && (
-          <Stack
-            direction="row"
-            spacing={1}
-            useFlexGap
-            sx={{
-              flexWrap: "wrap",
-              alignItems: "center"
-            }}
-          >
+          // add skill in-line 'form'
+          <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: "wrap", alignItems: "center"}}>
             <TextField
               placeholder="Add skill"
               value={newSkill}
@@ -598,7 +551,8 @@ export default function EmployeeTable({
             />
 
             <Button
-              variant="outlined"
+              variant="contained"
+              color={"secondary"}
               startIcon={<AddIcon/>}
               onClick={addSkill}
               sx={chipLikeButtonSx}
@@ -611,14 +565,38 @@ export default function EmployeeTable({
     );
   };
 
+  const renderSkillActions = (employee: Employee) => {
+    const employeeBeingEdited = editingSkillsEmployeeId === employee.id;
+
+    return (
+      <Stack direction="row" spacing={1} sx={{justifyContent: "space-around"}}>
+        {employeeBeingEdited ? (
+          <>
+            <IconButton size="small" onClick={() => { void confirmSkills(employee); }} aria-label="Confirm skills changes" sx={chipLikeIconButtonSx}>
+              <CheckIcon/>
+            </IconButton>
+
+            <IconButton size="small" onClick={cancelSkillsEdit} aria-label="Cancel skills changes" sx={chipLikeIconButtonSx}>
+              <CloseIcon/>
+            </IconButton>
+          </>
+        ) : (
+          <IconButton size="small" onClick={() => beginSkillEdit(employee)} aria-label="Edit skills" sx={chipLikeIconButtonSx}>
+            <EditIcon/>
+          </IconButton>
+        )}
+      </Stack>
+    );
+  };
+
   return (
     <TableContainer component={Paper} sx={{width: "100%", bgcolor: 'primary.main'}}>
-      <Table sx={{width: "100%", borderCollapse: "separate", borderSpacing: "0", tableLayout: 'fixed' }}>
+      <Table sx={{width: "100%", borderCollapse: "separate", borderSpacing: "0", tableLayout: 'auto' }}>
         <TableHead>
           <TableRow>
             <TableCell sx={{ width: 56 }} />
-            <TableCell align="center" sx={{ width: 220, minWidth: 220 }}>Name</TableCell>
-            <TableCell align="center" sx={{ width: 180, minWidth: 180 }}>Role</TableCell>
+            <TableCell align="center" sx={{ width: 140, minWidth: 140 }}>Name</TableCell>
+            <TableCell align="center" sx={{ width: 240, minWidth: 240 }}>Role</TableCell>
             <TableCell align="center" sx={{ width: 160, minWidth: 160 }}>Team</TableCell>
             <TableCell sx={{ width: 120, minWidth: 120 }} />
           </TableRow>
@@ -672,7 +650,7 @@ export default function EmployeeTable({
                     </TableCell>
 
                     {/*name cell*/}
-                    <TableCell align="center" sx={{ width: 200, minWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "clip" }}>
+                    <TableCell align="center" sx={{ width: 140, minWidth: 140, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "clip" }}>
                       {isEmployeeEditing ? (
                         <TextField
                           value={editingEmployeeName}
@@ -693,7 +671,7 @@ export default function EmployeeTable({
                     </TableCell>
 
                     {/*role cell*/}
-                    <TableCell align="center" sx={{ width: 200, minWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "clip" }}>
+                    <TableCell align="center" sx={{ width: 240, minWidth: 240, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "clip" }}>
                       {isEmployeeEditing ? (
                         <TextField
                           select
@@ -716,7 +694,7 @@ export default function EmployeeTable({
                     </TableCell>
 
                     {/*team name cell*/}
-                    <TableCell align="center" sx={{ width: 100, minWidth: 100, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "clip" }}>
+                    <TableCell align="center" sx={{ width: 160, minWidth: 160, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "clip" }}>
                       {isEmployeeEditing ? (
                         <TextField
                           value={editingEmployeeTeam}
@@ -736,49 +714,25 @@ export default function EmployeeTable({
                     </TableCell>
 
                     {/*employee action buttons*/}
-                    <TableCell align="center" sx={{ width: 80, minWidth: 80 }}>
+                    <TableCell align="center" sx={{ width: 120, minWidth: 120 }}>
                       <Stack direction="row" spacing={1} sx={{justifyContent: "space-around"}}>
                         {isEmployeeEditing ? (
                           <>
-                            <IconButton
-                              size="small"
-                              aria-label="Confirm employee changes"
-                              onClick={() => {
-                                void confirmEmployeeEdit(employee);
-                              }}
-                              disabled={!employeeEditValid}
-                              sx={plainIconButtonSx}
-                            >
+                            <IconButton size="small" aria-label="Confirm employee changes" onClick={() => {void confirmEmployeeEdit(employee);}} disabled={!employeeEditValid} sx={plainIconButtonSx}>
                               <CheckIcon/>
                             </IconButton>
 
-                            <IconButton
-                              size="small"
-                              aria-label="Cancel employee changes"
-                              onClick={cancelEmployeeEdit}
-                              sx={plainIconButtonSx}
-                            >
+                            <IconButton size="small" aria-label="Cancel employee changes" onClick={cancelEmployeeEdit} sx={plainIconButtonSx}>
                               <CloseIcon/>
                             </IconButton>
                           </>
                         ) : (
                           <>
-                            <IconButton
-                              size="small"
-                              aria-label="Edit employee"
-                              onClick={() => beginEmployeeEdit(employee)}
-                              sx={plainIconButtonSx}
-                            >
+                            <IconButton size="small" aria-label="Edit employee" onClick={() => beginEmployeeEdit(employee)} sx={plainIconButtonSx}>
                               <EditIcon/>
                             </IconButton>
 
-                            <IconButton
-                              size="small"
-                              color="error"
-                              aria-label="Delete employee"
-                              onClick={() => onDelete(employee.id)}
-                              sx={plainIconButtonSx}
-                            >
+                            <IconButton size="small" color="error" aria-label="Delete employee" onClick={() => onDelete(employee.id)} sx={plainIconButtonSx}>
                               <DeleteIcon/>
                             </IconButton>
                           </>
@@ -791,12 +745,13 @@ export default function EmployeeTable({
                   <TableRow
                     sx={{
                       "& > td": {
-                        p: 0,
+                        px: 2,
+                        py: 0,
                         border: 0
                       }
                     }}
                   >
-                    <TableCell colSpan={5}>
+                    <TableCell colSpan={4}>
                       <Collapse in={expanded} timeout="auto" unmountOnExit>
                         <Box
                           sx={{
@@ -806,6 +761,13 @@ export default function EmployeeTable({
                         >
                           {renderSkillContent(employee)}
                         </Box>
+                      </Collapse>
+                    </TableCell>
+                    <TableCell align="right" sx={{ width: 120, minWidth: 120 }}>
+                      <Collapse in={expanded} timeout="auto" unmountOnExit>
+                        {/*<Box sx={{ px: 2, py: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'right' }}>*/}
+                          {renderSkillActions(employee)}
+                        {/*</Box>*/}
                       </Collapse>
                     </TableCell>
                   </TableRow>
