@@ -1,4 +1,4 @@
-import type {Employee} from "../types/Employee";
+import type {Employee, EmployeeRole} from "../types/Employee";
 import {useEffect, useState} from "react";
 import {Box, Container, Paper, TextField} from "@mui/material";
 import {employeeService} from "../services/employeeService.ts";
@@ -32,20 +32,20 @@ export default function EmployeesPage() {
 
   // add Employee
   const [name, setName] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState<EmployeeRole | undefined>(undefined);
   const [team, setTeam] = useState("");
   const addEmployee = async () => {
 
     await employeeService.createEmployee({
       name,
-      role: role ? { role } : undefined,
+      role,
       team
     });
 
     await loadEmployees();
 
     setName("");
-    setRole("");
+    setRole(undefined);
     setTeam("");
   };
 
