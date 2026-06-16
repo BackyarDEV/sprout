@@ -6,8 +6,8 @@ export default function SproutFooter(): JSX.Element {
     <Box
       component="footer"
       sx={{
-        py: 10,
-        mt: 20,
+        py: 6,
+        mt: 'auto',
         bgcolor: "primary.main",
         borderTop: 1,
         borderColor: "divider",

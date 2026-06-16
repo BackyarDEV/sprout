@@ -4,6 +4,7 @@ import {Box, Container, Paper, TextField} from "@mui/material";
 import {employeeService} from "../services/employeeService.ts";
 import EmployeeTable from "../components/EmployeeTable";
 import EmployeeForm from "../components/EmployeeForm";
+import Typography from "@mui/material/Typography";
 
 export default function EmployeesPage() {
   // Commons
@@ -61,6 +62,10 @@ export default function EmployeesPage() {
   return (
 
     <Container maxWidth="md">
+      <Typography component="div" variant="h3"  color="text.primary" gutterBottom sx={{py: 4, fontFamily: "monospace"}}>
+        Manage Employees
+      </Typography>
+
       <Paper elevation={4}>
         <Box sx={{p: 3, mb: 3, bgcolor: 'primary.main'}}>
           <TextField

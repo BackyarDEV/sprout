@@ -18,9 +18,11 @@ import NightsStayIcon from '@mui/icons-material/NightsStay';
 type SproutAppBarProps = {
   mode: ThemeMode;
   onToggleTheme: () => void;
+  onMenuClick: () => void;
+  onProfileMenuClick: (item: string) => void;
 };
 
-export default function SproutAppBar({mode, onToggleTheme}: SproutAppBarProps) {
+export default function SproutAppBar({mode, onToggleTheme, onMenuClick, onProfileMenuClick}: SproutAppBarProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
@@ -39,7 +41,12 @@ export default function SproutAppBar({mode, onToggleTheme}: SproutAppBarProps) {
       anchorOrigin={{ vertical: 'top', horizontal: 'right',}}
       transformOrigin={{vertical: 'top', horizontal: 'right',}}
     >
-      <MenuItem sx={(theme) => ({bgcolor: theme.palette.background.default})} onClick={handleMenuClose}>Login</MenuItem>
+      <MenuItem sx={(theme) => ({bgcolor: theme.palette.background.default})} onClick={() => {
+        handleMenuClose();
+        onProfileMenuClick("Auth");
+      }}>
+        Login
+      </MenuItem>
     </Menu>
   );
 
@@ -59,11 +66,8 @@ export default function SproutAppBar({mode, onToggleTheme}: SproutAppBarProps) {
       })}>
         <Toolbar sx={{position: 'relative'}}>
 
-          {/*/!*free space*!/*/}
-          <Box sx={{display: {xs: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex'}, flexGrow: 1}}/>
-
           {/*drawer icon*/}
-          <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{mr: 2}}>
+          <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{mr: 2}} onClick={onMenuClick}>
             <MenuIcon/>
           </IconButton>
 
@@ -140,9 +144,6 @@ export default function SproutAppBar({mode, onToggleTheme}: SproutAppBarProps) {
               <AccountCircle/>
             </IconButton>
           </Box>
-
-          {/*free space*/}
-          <Box sx={{display: {xs: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'flex'}, flexGrow: 1}}/>
 
         </Toolbar>
       </AppBar>
