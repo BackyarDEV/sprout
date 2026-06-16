@@ -49,7 +49,7 @@ function App() {
       <CssBaseline enableColorScheme />
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <SproutAppBar mode={mode} onToggleTheme={toggleTheme} onMenuClick={() => setDrawerOpen(prev => !prev)} onProfileMenuClick={setSelectedPage} />
-        <SproutDrawer drawerWidth={DRAWER_WIDTH} open={drawerOpen} itemList={drawerItems} onItemClick={setSelectedPage} />
+        <SproutDrawer drawerWidth={DRAWER_WIDTH} open={drawerOpen} itemList={drawerItems} onItemClick={setSelectedPage} onClose={() => setDrawerOpen(false)} />
 
         <Box sx={(theme) => ({ ...theme.mixins.toolbar })} />
 
@@ -60,27 +60,31 @@ function App() {
           ml: drawerOpen ? DRAWER_WIDTH+'px' : 0,
           transition: theme => theme.transitions.create(['margin'], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }),
           position: 'relative',
+          // ensure a stable stacking context and height for absolutely positioned pages
+          minHeight: 0,
         }}>
-          <Fade in={selectedPage === "Employees"} timeout={300} unmountOnExit>
-            <Box>
+          {/* Use absolute positioning for page panes to avoid layout shift when switching pages */}
+
+          <Fade in={selectedPage === "Employees"} timeout={{enter: 300, exit: 300}} mountOnEnter unmountOnExit>
+            <Box sx={{ width: '100%' }}>
               <EmployeesPage />
             </Box>
           </Fade>
 
-          <Fade in={selectedPage === "Roles"} timeout={300} unmountOnExit>
-            <Box>
+          <Fade in={selectedPage === "Roles"} timeout={{enter: 300, exit: 300}} mountOnEnter unmountOnExit>
+            <Box sx={{ width: '100%' }}>
               <RolesPage />
             </Box>
           </Fade>
 
-          <Fade in={selectedPage === "Teams"} timeout={300} unmountOnExit>
-            <Box>
+          <Fade in={selectedPage === "Teams"} timeout={{enter: 300, exit: 300}} mountOnEnter unmountOnExit>
+            <Box sx={{ width: '100%' }}>
               <TeamsPage />
             </Box>
           </Fade>
 
-          <Fade in={selectedPage === "Auth"} timeout={300} unmountOnExit>
-            <Box>
+          <Fade in={selectedPage === "Auth"} timeout={{enter: 300, exit: 300}} mountOnEnter unmountOnExit>
+            <Box sx={{ width: '100%' }}>
               <AuthPage />
             </Box>
           </Fade>

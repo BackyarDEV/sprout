@@ -10,10 +10,11 @@ type SproutDrawerProps = {
   open: boolean;
   itemList: string[];
   onItemClick: (itemName: string) => void;
+  onClose: () => void;
 };
 
 
-export default function SproutDrawer({ drawerWidth, open, itemList, onItemClick }: SproutDrawerProps) {
+export default function SproutDrawer({ drawerWidth, open, itemList, onItemClick, onClose }: SproutDrawerProps) {
   return (
     <Drawer
       variant="persistent"
@@ -32,7 +33,7 @@ export default function SproutDrawer({ drawerWidth, open, itemList, onItemClick 
         {itemList.map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: 'block' }}>
             <ListItemButton
-              onClick={() => onItemClick(text)}
+              onClick={() => { onClose(); onItemClick(text); }}
               sx={[
                 {
                   minHeight: 64,
