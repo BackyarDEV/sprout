@@ -8,29 +8,28 @@ http:
   url: "{{baseURL}}/employees/:id"
   params:
     - name: id
-      value: "1"
+      value: "2"
       type: path
   body:
     type: json
-    data: |2-
-        {
-          "name": "BackyarDev",
-          "role": {
+    data: |-
+      {
+        "name": "botn0ught",
+        "role": {
+          "id": 1,
+          "role": "Software Engineer I"
+        },
+        "skills": [
+          {
             "id": 1,
-            "role": "Software Engineer Lead"
-          },
-          "skills": [
-            {
-              "id": 1,
-              "skillName": "Java"
-            },
-            {
-              "id": 5,
-              "skillName": "Javascript"
-            }
-          ],
-          "team": "Unemployed"
+            "skillName": "Java"
+          }
+        ],
+        "team": {
+          "id": 1,
+          "team": "Freelance"
         }
+      }
   auth: inherit
 
 settings:

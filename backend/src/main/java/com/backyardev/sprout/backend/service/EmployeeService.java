@@ -3,9 +3,11 @@ package com.backyardev.sprout.backend.service;
 import com.backyardev.sprout.backend.entity.Employee;
 import com.backyardev.sprout.backend.entity.EmployeeRole;
 import com.backyardev.sprout.backend.entity.Skill;
+import com.backyardev.sprout.backend.entity.Team;
 import com.backyardev.sprout.backend.repository.EmployeeRepository;
 import com.backyardev.sprout.backend.repository.EmployeeRoleRepository;
 import com.backyardev.sprout.backend.repository.SkillRepository;
+import com.backyardev.sprout.backend.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final SkillRepository skillRepository;
     private final EmployeeRoleRepository employeeRoleRepository;
+    private final TeamRepository teamRepository;
 
     public List<Employee> getAll() {
         return employeeRepository.findAll();
@@ -95,5 +98,18 @@ public class EmployeeService {
 
     public EmployeeRole addRole(EmployeeRole role) {
         return employeeRoleRepository.save(role);
+    }
+
+    public List<Team> getTeams() {
+        return teamRepository.findAll();
+    }
+
+    public Team getTeamByName(String team) {
+        return teamRepository.findByTeamIgnoreCase(team)
+            .orElseThrow(() -> new RuntimeException("Role not found: " + team));
+    }
+
+    public Team addTeam(Team team) {
+        return teamRepository.save(team);
     }
 }

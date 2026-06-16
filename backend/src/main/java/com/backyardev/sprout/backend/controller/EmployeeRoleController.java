@@ -18,16 +18,19 @@ public class EmployeeRoleController {
 
     @GetMapping("")
     public List<EmployeeRole> getRoles() {
+        log.info("Getting roles");
         return service.getRoles();
     }
 
     @GetMapping("/{role}")
     public EmployeeRole getRoleByName(@PathVariable String role) {
+        log.info("Getting role: {}", role);
         return service.getRoleByName(role);
     }
 
     @PostMapping("")
     public EmployeeRole addRole(@RequestBody EmployeeRole role) {
+        log.info("Adding role: {}", role);
         return service.addRole(role);
     }
 }

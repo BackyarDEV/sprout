@@ -1,16 +1,16 @@
 import {Button, MenuItem, Paper, Stack, TextField} from "@mui/material";
-import type {EmployeeRole} from "../types/Employee.ts";
+import type {EmployeeRole, Team} from "../types/Employee.ts";
 import {useEffect, useState} from "react";
 import {employeeService} from "../services/employeeService.ts";
 
 interface EmployeeFormProps {
   name: string;
   role: EmployeeRole | undefined;
-  team: string;
+  team: Team | undefined;
 
   onNameChange: (value: string) => void;
   onRoleChange: (value: EmployeeRole | undefined) => void;
-  onTeamChange: (value: string) => void;
+  onTeamChange: (value: Team | undefined) => void;
 
   onSubmit: () => void;
 }
@@ -25,9 +25,9 @@ export default function EmployeeForm({
                                        onSubmit
                                      }: EmployeeFormProps) {
 
-  const isValid = name.trim().length >= 3 && team.trim().length >= 3;
+  const isValid = name.trim().length >= 3;
 
-  const roleMenuItemSx = {
+  const menuItemSx = {
     bgcolor: 'primary.dark',
     color: 'primary.contrastText',
 
@@ -53,15 +53,16 @@ export default function EmployeeForm({
             sx: {
               maxHeight: 48 * 4,
 
-              bgcolor: '#222',
+              bgcolor: 'primary.main',
               '& .MuiMenuItem-root': {
-                color: '#fff',
+                color: 'primary.contrastText',
               },
               '& .MuiMenuItem-root:hover': {
-                bgcolor: '#333',
+                bgcolor: 'primary.darker',
               },
               '& .Mui-selected': {
-                bgcolor: '#444 !important',
+                bgcolor: 'secondary.main',
+                color: 'secondary.contrastText'
               },
             },
           },
@@ -69,6 +70,24 @@ export default function EmployeeForm({
       },
     },
   };
+
+  const [teams, setTeams] = useState<Team[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      try {
+        const list = await employeeService.getTeams();
+        if (mounted) setTeams(list);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (err : unknown) {
+        console.error('err occurred while fetching teams');
+      }
+    })();
+
+    return () => { mounted = false; };
+  }, []);
 
   const [roles, setRoles] = useState<EmployeeRole[]>([]);
 
@@ -81,7 +100,7 @@ export default function EmployeeForm({
         if (mounted) setRoles(list);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err : unknown) {
-        // ignore
+        console.error('err occurred while fetching employee roles');
       }
     })();
 
@@ -111,8 +130,8 @@ export default function EmployeeForm({
           }
           fullWidth></TextField>
 
-
         <TextField
+          label="Role"
           select
           value={role}
           onChange={(e) => {
@@ -123,9 +142,9 @@ export default function EmployeeForm({
           sx={{ textAlign: 'left' }}
           slotProps={slotProps}
         >
-          <MenuItem value="" sx={roleMenuItemSx}>Select Role</MenuItem>
+          <MenuItem value="" sx={menuItemSx}>Select Role</MenuItem>
           {roles.map(r => (
-            <MenuItem key={r.id ?? r.role} value={r.role} sx={roleMenuItemSx}>
+            <MenuItem key={r.id ?? r.role} value={r.role} sx={menuItemSx}>
               {r.role}
             </MenuItem>
           ))}
@@ -133,22 +152,23 @@ export default function EmployeeForm({
 
         <TextField
           label="Team"
+          select
           value={team}
-          onChange={(e) =>
-            onTeamChange(e.target.value)
+          onChange={(e) => {
+            const selectedTeam = teams.find(t => t.team === e.target.value);
+            onTeamChange(selectedTeam)
           }
-          error={
-            team.trim().length > 0 &&
-            team.trim().length < 3
           }
-          helperText={
-            team.trim().length > 0 &&
-            team.trim().length < 3
-              ? "Minimum 3 characters"
-              : ""
-          }
-          fullWidth
-        />
+          sx={{ textAlign: 'left' }}
+          slotProps={slotProps}
+        >
+          <MenuItem value="" sx={menuItemSx}>Select Team</MenuItem>
+          {teams.map(t => (
+            <MenuItem key={t.id ?? t.team} value={t.team} sx={menuItemSx}>
+              {t.team}
+            </MenuItem>
+          ))}
+        </TextField>
 
         <Button
           variant="contained"

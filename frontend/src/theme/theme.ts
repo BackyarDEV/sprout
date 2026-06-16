@@ -55,7 +55,7 @@ export const getTheme = (mode: ThemeMode) =>
                 ? {
                     mode,
                     primary: {
-                        main: "#e7f8e9",
+                        main: "#def6e5",
                         contrastText: "#000000",
                     },
                     secondary: {
@@ -74,7 +74,7 @@ export const getTheme = (mode: ThemeMode) =>
                         contrastText: "#ffffff",
                     },
                     secondary: {
-                        main: "#e7f8e9",
+                        main: "#def6e5",
                         contrastText: "#000000",
                     },
                     background: {

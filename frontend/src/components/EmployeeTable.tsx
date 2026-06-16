@@ -1,5 +1,5 @@
 import {Fragment, useState, useEffect} from "react";
-import type {Employee, EmployeeRole} from "../types/Employee";
+import type {Employee, EmployeeRole, Team} from "../types/Employee";
 import {
   Box,
   Button,
@@ -31,7 +31,11 @@ import {employeeService} from "../services/employeeService.ts";
 interface EmployeeTableProps {
   employees: Employee[];
   onDelete: (id: number) => void;
-  onUpdateEmployee: (employeeId: number, employee: Omit<Employee, "id">) => Promise<void>;
+  onUpdateEmployee: (employeeId: number, employee: {
+    name: string;
+    role: EmployeeRole | undefined;
+    team: Team | undefined;
+  }) => Promise<void>;
   onUpdateSkills: (employeeId: number, skills: string[]) => Promise<void>;
 }
 
@@ -105,7 +109,7 @@ const plainIconButtonSx = {
   }
 };
 
-const roleMenuItemSx = {
+const menuItemSx = {
   bgcolor: 'primary.dark',
   color: 'primary.contrastText',
 
@@ -131,15 +135,16 @@ const slotProps = {
           sx: {
             maxHeight: 48 * 4,
 
-            bgcolor: '#222',
+            bgcolor: 'primary.main',
             '& .MuiMenuItem-root': {
-              color: '#fff',
+              color: 'primary.contrastText',
             },
             '& .MuiMenuItem-root:hover': {
-              bgcolor: '#333',
+              bgcolor: 'primary.darker',
             },
             '& .Mui-selected': {
-              bgcolor: '#444 !important',
+              bgcolor: 'secondary.main',
+              color: 'secondary.contrastText'
             },
           },
         },
@@ -172,6 +177,24 @@ export default function EmployeeTable({
   const [editingSkillDraft, setEditingSkillDraft] = useState("");
   const [newSkill, setNewSkill] = useState("");
 
+  const [teams, setTeams] = useState<Team[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      try {
+        const list = await employeeService.getTeams();
+        if (mounted) setTeams(list);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (err : unknown) {
+        console.error('err occurred while fetching teams');
+      }
+    })();
+
+    return () => { mounted = false; };
+  }, []);
+
   const [roles, setRoles] = useState<EmployeeRole[]>([]);
 
   useEffect(() => {
@@ -183,7 +206,7 @@ export default function EmployeeTable({
         if (mounted) setRoles(list);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err : unknown) {
-        // ignore
+        console.error('err occurred while fetching teams');
       }
     })();
 
@@ -240,10 +263,10 @@ export default function EmployeeTable({
     setEditingEmployeeId(employee.id);
     setEditingEmployeeName(employee.name);
     setEditingEmployeeRole(employee.role?.role ?? "");
-    setEditingEmployeeTeam(employee.team);
+    setEditingEmployeeTeam(employee.team?.team ?? "");
     setEditingEmployeeOriginalName(employee.name);
     setEditingEmployeeOriginalRole(employee.role?.role ?? "");
-    setEditingEmployeeOriginalTeam(employee.team);
+    setEditingEmployeeOriginalTeam(employee.team?.team ?? "");
     setEditingSkillsEmployeeId(null);
     setDraftSkillNames([]);
     setOriginalSkillNames([]);
@@ -276,10 +299,11 @@ export default function EmployeeTable({
     }
 
     const roleObj = nextRole ? roles.find(r => r.role === nextRole) : undefined;
+    const teamObj = nextTeam ? teams.find(t => t.team === nextTeam) : undefined;
     await onUpdateEmployee(employee.id, {
       name: nextName,
       role: roleObj,
-      team: nextTeam
+      team: teamObj
     });
 
     setEditingEmployeeId(null);
@@ -296,6 +320,7 @@ export default function EmployeeTable({
     setEditingEmployeeRole("");
     setEditingEmployeeOriginalName("");
     setEditingEmployeeOriginalRole("");
+    setEditingEmployeeOriginalTeam("");
   };
 
   const beginSkillEdit = (employee: Employee) => {
@@ -311,6 +336,7 @@ export default function EmployeeTable({
     setEditingEmployeeRole("");
     setEditingEmployeeOriginalName("");
     setEditingEmployeeOriginalRole("");
+    setEditingEmployeeOriginalTeam("");
     if ((employee.skills ?? []).length > 0 && manuallyCollapsedEmployeeIds.has(employee.id)) {
       toggleExpanded(employee);
     }
@@ -692,9 +718,9 @@ export default function EmployeeTable({
                           sx={chipLikeInputSx}
                           slotProps={slotProps}
                         >
-                          <MenuItem value="" sx={roleMenuItemSx}>Select Role</MenuItem>
+                          <MenuItem value="" sx={menuItemSx}>Select Role</MenuItem>
                           {roles.map(r => (
-                            <MenuItem key={r.id ?? r.role} value={r.role} sx={roleMenuItemSx}>
+                            <MenuItem key={r.id ?? r.role} value={r.role} sx={menuItemSx}>
                               {r.role}
                             </MenuItem>
                           ))}
@@ -708,19 +734,22 @@ export default function EmployeeTable({
                     <TableCell align="center" sx={{ width: 160, minWidth: 160, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "clip" }}>
                       {isEmployeeEditing ? (
                         <TextField
+                          select
                           value={editingEmployeeTeam}
-                          onChange={(e) => setEditingEmployeeTeam(e.target.value)}
+                          onChange={(e) => setEditingEmployeeTeam(e.target.value as string)}
                           variant="standard"
-                          placeholder="Team"
-                          slotProps={{
-                            input: {
-                              disableUnderline: false
-                            }
-                          }}
                           sx={chipLikeInputSx}
-                        />
+                          slotProps={slotProps}
+                        >
+                          <MenuItem value="" sx={menuItemSx}>Select Team</MenuItem>
+                          {teams.map(t => (
+                            <MenuItem key={t.id ?? t.team} value={t.team} sx={menuItemSx}>
+                              {t.team}
+                            </MenuItem>
+                          ))}
+                        </TextField>
                       ) : (
-                        employee.team
+                        employee.team?.team ?? ""
                       )}
                     </TableCell>
 

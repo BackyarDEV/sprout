@@ -29,7 +29,16 @@ public class Employee {
     @ToString.Exclude
     private EmployeeRole role;
 
-    private String team;
+    @ManyToOne()
+    @JoinTable(
+            name = "employee_team_links",
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "team_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id", "team_id"})
+    )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Team team;
 
     @ManyToMany(
         cascade = {

@@ -20,8 +20,8 @@ public class EmployeeController {
 
     @PostMapping
     public Employee create(
-            @RequestBody Employee employee)
-    {
+            @RequestBody Employee employee
+    ) {
         log.info("Creating employee: {}", employee.getName());
         return service.save(employee);
     }
@@ -35,8 +35,8 @@ public class EmployeeController {
     @PutMapping("/{id}")
     public void update(
             @PathVariable Long id,
-            @RequestBody Employee employee)
-    {
+            @RequestBody Employee employee
+    ) {
         log.info("Updating employee: {} having id: {}", employee.getName(), id);
         service.update(id, employee);
     }
@@ -44,8 +44,8 @@ public class EmployeeController {
     @PutMapping("/{id}/skills")
     public Employee updateSkills(
             @PathVariable Long id,
-            @RequestBody Set<Skill> skills)
-    {
+            @RequestBody Set<Skill> skills
+    ) {
         log.info("Updating skills for employee with id: {}", id);
         return service.updateSkills(id, skills);
     }

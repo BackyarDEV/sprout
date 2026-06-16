@@ -1,0 +1,21 @@
+info:
+  name: Add Team
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseURL}}/teams"
+  body:
+    type: json
+    data: |-
+      {
+        "team": "Freelance"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -3,6 +3,11 @@ export interface Skill {
     skillName: string;
 }
 
+export interface Team {
+    id?: number;
+    team: string;
+}
+
 export interface EmployeeRole {
     id?: number;
     role: string;
@@ -12,6 +17,6 @@ export interface Employee {
     id: number;
     name: string;
     role?: EmployeeRole;
-    team: string;
+    team?: Team;
     skills?: Skill[];
 }
