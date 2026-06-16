@@ -9,6 +9,7 @@ import Menu from '@mui/material/Menu';
 import {alpha} from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import type {ThemeMode} from "../theme/theme.ts";
 import Tooltip from "@mui/material/Tooltip";
 import SunnyIcon from '@mui/icons-material/Sunny';
@@ -50,6 +51,10 @@ export default function SproutAppBar({mode, onToggleTheme, onMenuClick, onProfil
     </Menu>
   );
 
+  function redirectToGitHub() {
+    window.open("https://github.com/BackyarDev/sprout", "_blank");
+  }
+
   return (
     <Box>
       <AppBar position="fixed" elevation={12} sx={(theme) => ({
@@ -89,8 +94,9 @@ export default function SproutAppBar({mode, onToggleTheme, onMenuClick, onProfil
           {/*free space*/}
           <Box sx={{flexGrow: 2}}/>
 
-          {/*theme switch*/}
           <Box sx={{display: "flex", alignItems: "center"}}>
+
+            {/*theme switch*/}
             <Tooltip
               title={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
             >
@@ -132,6 +138,19 @@ export default function SproutAppBar({mode, onToggleTheme, onMenuClick, onProfil
               </Box>
             </Tooltip>
 
+            {/*profile icon*/}
+            <IconButton
+              size="large"
+              edge="start"
+              aria-label="github repository"
+              onClick={redirectToGitHub}
+              color="inherit"
+              sx={{ml: 1}}
+            >
+              <GitHubIcon fontSize={"medium"}/>
+            </IconButton>
+
+            {/*profile icon*/}
             <IconButton
               size="large"
               edge="end"
@@ -141,7 +160,7 @@ export default function SproutAppBar({mode, onToggleTheme, onMenuClick, onProfil
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountCircle/>
+              <AccountCircle fontSize={"medium"}/>
             </IconButton>
           </Box>
 
