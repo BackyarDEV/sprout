@@ -24,9 +24,16 @@ export default function SproutDrawer({ drawerWidth, open, itemList, onItemClick,
         '& .MuiDrawer-paper': {
           top: APPBAR_HEIGHT,
           height: `calc(100% - ${APPBAR_HEIGHT}px)`,
-          width: drawerWidth,
+        width: { xs: '100%', sm: `${drawerWidth}px` },
           zIndex: theme.zIndex.appBar - 1,
         },
+        // make the paper full-bleed on very small devices
+        '@media (max-width:600px)': {
+        '& .MuiDrawer-paper': {
+          width: '100% !important',
+          left: 0,
+        }
+        }
       })}
     >
       <List sx={{ mt: 2}}>

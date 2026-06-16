@@ -57,7 +57,7 @@ function App() {
         <Box component="main" sx={{
           flex: 1,
           my: 6,
-          ml: drawerOpen ? DRAWER_WIDTH+'px' : 0,
+          ml: { xs: 0, sm: drawerOpen ? `${DRAWER_WIDTH}px` : 0 },
           transition: theme => theme.transitions.create(['margin'], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }),
           position: 'relative',
           // ensure a stable stacking context and height for absolutely positioned pages
@@ -90,7 +90,7 @@ function App() {
           </Fade>
         </Box>
         <Box sx={{
-          ml: drawerOpen ? DRAWER_WIDTH+'px' : 0,
+          ml: { xs: 0, sm: drawerOpen ? `${DRAWER_WIDTH}px` : 0 },
           transition: theme => theme.transitions.create(['margin'], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.leavingScreen }),
         }}>
           <SproutFooter />
