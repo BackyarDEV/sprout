@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Alert, Typography, Link } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import type { AuthFormState } from "../types/Auth";
 
 export default function RegisterForm() {
@@ -7,6 +9,8 @@ export default function RegisterForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
   const validate = () => {
     if (!form.username) return "Username is required";
@@ -29,9 +33,10 @@ export default function RegisterForm() {
     }
     setLoading(true);
     try {
-      await new Promise((r) => setTimeout(r, 800));
-      setSuccess("Registration successful. Please check your username to verify or sign in.");
+      await register(form);
+      setSuccess("Registration successful. You are signed in.");
       setForm({ username: "", password: "", confirmPassword: "" });
+      navigate("/employees");
     } catch (err: unknown) {
       setError((err as Error).message ?? "Registration failed");
     } finally {

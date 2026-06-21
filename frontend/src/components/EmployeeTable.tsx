@@ -718,7 +718,6 @@ export default function EmployeeTable({
                           sx={chipLikeInputSx}
                           slotProps={slotProps}
                         >
-                          <MenuItem value="" sx={menuItemSx}>Select Role</MenuItem>
                           {roles.map(r => (
                             <MenuItem key={r.id ?? r.role} value={r.role} sx={menuItemSx}>
                               {r.role}
@@ -741,7 +740,6 @@ export default function EmployeeTable({
                           sx={chipLikeInputSx}
                           slotProps={slotProps}
                         >
-                          <MenuItem value="" sx={menuItemSx}>Select Team</MenuItem>
                           {teams.map(t => (
                             <MenuItem key={t.id ?? t.team} value={t.team} sx={menuItemSx}>
                               {t.team}

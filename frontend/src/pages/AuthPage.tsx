@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Paper,
@@ -13,9 +14,22 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import LoginForm from "../components/LoginForm";
 import RegisterForm from "../components/RegisterForm";
 
-export default function AuthPage() {
-  const [tab, setTab] = useState<0 | 1>(0);
+type Props = {
+  defaultTab?: 0 | 1;
+};
+
+export default function AuthPage({ defaultTab }: Props) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const theme = useTheme();
+
+  // Derive the active tab from navigation state or pathname so the UI reflects route changes
+  const tab = useMemo<0 | 1>(() => {
+    const s = (location.state as { tab?: 0 | 1 } | undefined)?.tab;
+    if (typeof s === "number") return s;
+    if (location.pathname.endsWith("/register")) return 1;
+    return defaultTab ?? 0;
+  }, [location.pathname, location.state, defaultTab]);
   return (
     <Container maxWidth="sm" sx={{ mt: 8, mb: 8}}>
       {/* set a contrasting text color so children (like Tabs/Tab) can inherit */}
@@ -32,13 +46,13 @@ export default function AuthPage() {
 
         <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
           {/* use textColor="inherit" so Tab labels inherit the Paper text color (contrastText) */}
-          <Tabs value={tab} onChange={(_, v) => setTab(v as 0 | 1)} variant="fullWidth" textColor="inherit" indicatorColor="secondary">
+          <Tabs value={tab} onChange={(_, v) => { const newTab = v as 0 | 1; navigate(newTab === 1 ? '/register' : '/login', { state: { tab: newTab } }); }} variant="fullWidth" textColor="inherit" indicatorColor="secondary">
             <Tab label="Login" />
             <Tab label="Register" />
           </Tabs>
         </Box>
 
-        <Box>{tab === 0 ? <LoginForm /> : <RegisterForm />}</Box>
+        <Box>{tab === 0 ? <LoginForm/> : <RegisterForm/>}</Box>
       </Paper>
     </Container>
   );

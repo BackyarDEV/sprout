@@ -9,12 +9,16 @@ import {
   Typography,
   Link,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import type { AuthFormState } from "../types/Auth";
 
 export default function LoginForm() {
   const [form, setForm] = useState<AuthFormState>({ username: "", password: "", remember: false });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const validate = () => {
     if (!form.username) return "Username is required";
@@ -32,8 +36,8 @@ export default function LoginForm() {
     }
     setLoading(true);
     try {
-      await new Promise((r) => setTimeout(r, 700));
-      console.log("LOGIN:", { username: form.username, remember: form.remember });
+      await login(form);
+      navigate("/employees");
     } catch (err: unknown) {
       setError((err as Error).message ?? "Login failed");
     } finally {
@@ -68,6 +72,7 @@ export default function LoginForm() {
       <FormControlLabel
         control={
           <Checkbox
+            color="secondary"
             checked={!!form.remember}
             onChange={(e) => setForm({ ...form, remember: e.target.checked })}
           />

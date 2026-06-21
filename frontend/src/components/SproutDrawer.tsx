@@ -3,8 +3,6 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import BadgeIcon from '@mui/icons-material/Badge';
 
-const APPBAR_HEIGHT = 64;
-
 type SproutDrawerProps = {
   drawerWidth: number;
   open: boolean;
@@ -20,23 +18,21 @@ export default function SproutDrawer({ drawerWidth, open, itemList, onItemClick,
       variant="persistent"
       anchor="left"
       open={open}
-      sx={(theme) => ({
+      sx={{
         '& .MuiDrawer-paper': {
-          top: APPBAR_HEIGHT,
-          height: `calc(100% - ${APPBAR_HEIGHT}px)`,
-        width: { xs: '100%', sm: `${drawerWidth}px` },
-          zIndex: theme.zIndex.appBar - 1,
+          width: { xs: '100%', sm: `${drawerWidth}px` },
+          boxShadow: (theme) => theme.shadows[12],
         },
         // make the paper full-bleed on very small devices
         '@media (max-width:600px)': {
-        '& .MuiDrawer-paper': {
-          width: '100% !important',
-          left: 0,
+          '& .MuiDrawer-paper': {
+            width: '100% !important',
+            left: 0,
+          }
         }
-        }
-      })}
+      }}
     >
-      <List sx={{ mt: 2}}>
+      <List sx={{ mt: 12, mb: 5 }}>
         {itemList.map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: 'block' }}>
             <ListItemButton

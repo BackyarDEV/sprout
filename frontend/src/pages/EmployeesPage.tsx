@@ -61,51 +61,57 @@ export default function EmployeesPage() {
   // Render
   return (
 
-    <Container maxWidth="md">
+    <>
       <Typography component="div" variant="h3"  color="text.primary" gutterBottom sx={{py: 4, fontFamily: "monospace"}}>
         Manage Employees
       </Typography>
+      <Container maxWidth="xs">
 
-      <Paper elevation={4}>
-        <Box sx={{p: 3, mb: 3, bgcolor: 'primary.main'}}>
-          <TextField
-            label="Search Employees"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            fullWidth
+        <Paper square={false} elevation={4}>
+          <Box sx={{p: 1, mb: 3, bgcolor: 'primary.main'}}>
+            <TextField
+              label="Search Employees"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              fullWidth
+            />
+          </Box>
+        </Paper>
+
+      </Container>
+      <Container maxWidth="md">
+
+        <Paper elevation={4}>
+          <EmployeeForm
+            name={name}
+            role={role}
+            team={team}
+            onNameChange={setName}
+            onRoleChange={setRole}
+            onTeamChange={setTeam}
+            onSubmit={addEmployee}
           />
-        </Box>
-      </Paper>
+        </Paper>
 
-      <Paper elevation={4}>
-        <EmployeeForm
-          name={name}
-          role={role}
-          team={team}
-          onNameChange={setName}
-          onRoleChange={setRole}
-          onTeamChange={setTeam}
-          onSubmit={addEmployee}
-        />
-      </Paper>
-      <Paper elevation={4}>
-        <EmployeeTable
-          employees={filteredEmployees}
-          onDelete={deleteEmployee}
-          onUpdateEmployee={async (employeeId, employee) => {
-            await employeeService.updateEmployee(employeeId, employee);
-            await loadEmployees();
-          }}
-          onUpdateSkills={async (employeeId, skills) => {
-            await employeeService.updateEmployeeSkills(
-              employeeId,
-              skills.map(skillName => ({ skillName }))
-            );
-            await loadEmployees();
-          }}
-        />
-      </Paper>
-    </Container>
+        <Paper elevation={4}>
+          <EmployeeTable
+            employees={filteredEmployees}
+            onDelete={deleteEmployee}
+            onUpdateEmployee={async (employeeId, employee) => {
+              await employeeService.updateEmployee(employeeId, employee);
+              await loadEmployees();
+            }}
+            onUpdateSkills={async (employeeId, skills) => {
+              await employeeService.updateEmployeeSkills(
+                employeeId,
+                skills.map(skillName => ({ skillName }))
+              );
+              await loadEmployees();
+            }}
+          />
+        </Paper>
 
+      </Container>
+    </>
   );
 }

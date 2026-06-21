@@ -1,7 +1,9 @@
-import { useMemo, useState, useEffect } from "react";
-import {Box, CssBaseline, ThemeProvider, Fade} from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
+import {Box, CssBaseline, ThemeProvider} from "@mui/material";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
-import { getTheme, type ThemeMode } from "./theme/theme";
+import {getTheme, type ThemeMode} from "./theme/theme";
 import EmployeesPage from "./pages/EmployeesPage";
 import SproutAppBar from "./components/SproutAppBar.tsx";
 import SproutDrawer from "./components/SproutDrawer.tsx";
@@ -9,8 +11,10 @@ import SproutFooter from "./components/SproutFooter.tsx";
 import RolesPage from "./pages/RolesPage.tsx";
 import TeamsPage from "./pages/TeamsPage.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
+import UnknownPage from "./pages/UnknownPage.tsx";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
-function App() {
+function AppContent() {
   const [mode, setMode] = useState<ThemeMode>(() =>
     typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches
       ? "dark"
@@ -41,15 +45,31 @@ function App() {
   // Drawer Navigation
   const DRAWER_WIDTH = 320;
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedPage, setSelectedPage] = useState("Auth");
-  const drawerItems = ["Employees", "Roles", "Teams"];
+
+  const navigate = useNavigate();
+  const handleNavigate = (page: string, tab?: 0 | 1) => {
+    // support callers that pass explicit login/register
+    if (page.toLowerCase() === "login") {
+      navigate("/login", { state: { tab } });
+      return;
+    }
+    if (page.toLowerCase() === "register") {
+      navigate("/register", { state: { tab } });
+      return;
+    }
+    const map: Record<string, string> = { Employees: "/employees", Roles: "/roles", Teams: "/teams" };
+    const to = map[page] ?? "/";
+    navigate(to);
+  };
+
+  const { user } = useAuth();
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline enableColorScheme />
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <SproutAppBar mode={mode} onToggleTheme={toggleTheme} onMenuClick={() => setDrawerOpen(prev => !prev)} onProfileMenuClick={setSelectedPage} />
-        <SproutDrawer drawerWidth={DRAWER_WIDTH} open={drawerOpen} itemList={drawerItems} onItemClick={setSelectedPage} onClose={() => setDrawerOpen(false)} />
+        <SproutAppBar mode={mode} onToggleTheme={toggleTheme} onMenuClick={() => setDrawerOpen(prev => !prev)} onProfileMenuClick={handleNavigate} />
+        <SproutDrawer drawerWidth={DRAWER_WIDTH} open={drawerOpen} itemList={["Employees","Roles","Teams"]} onItemClick={handleNavigate} onClose={() => setDrawerOpen(false)} />
 
         <Box sx={(theme) => ({ ...theme.mixins.toolbar })} />
 
@@ -57,48 +77,41 @@ function App() {
         <Box component="main" sx={{
           flex: 1,
           my: 6,
-          ml: { xs: 0, sm: drawerOpen ? `${DRAWER_WIDTH}px` : 0 },
-          transition: theme => theme.transitions.create(['margin'], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen }),
           position: 'relative',
           // ensure a stable stacking context and height for absolutely positioned pages
           minHeight: 0,
         }}>
-          {/* Use absolute positioning for page panes to avoid layout shift when switching pages */}
 
-          <Fade in={selectedPage === "Employees"} timeout={{enter: 300, exit: 300}} mountOnEnter unmountOnExit>
-            <Box sx={{ width: '100%' }}>
-              <EmployeesPage />
-            </Box>
-          </Fade>
+          <Routes>
+            <Route path="/login" element={user ? <Navigate to="/" /> : <AuthPage defaultTab={0} />} />
+            <Route path="/register" element={user ? <Navigate to="/" /> : <AuthPage defaultTab={1} />} />
+            <Route path="/employees" element={<RequireAuth><EmployeesPage /></RequireAuth>} />
+            <Route path="/roles" element={<RequireAuth><RolesPage /></RequireAuth>} />
+            <Route path="/teams" element={<RequireAuth><TeamsPage /></RequireAuth>} />
+            <Route path="/" element={user ? <Navigate to="/employees" /> : <Navigate to="/login" />} />
+            <Route path="*" element={<UnknownPage />} />
+          </Routes>
 
-          <Fade in={selectedPage === "Roles"} timeout={{enter: 300, exit: 300}} mountOnEnter unmountOnExit>
-            <Box sx={{ width: '100%' }}>
-              <RolesPage />
-            </Box>
-          </Fade>
-
-          <Fade in={selectedPage === "Teams"} timeout={{enter: 300, exit: 300}} mountOnEnter unmountOnExit>
-            <Box sx={{ width: '100%' }}>
-              <TeamsPage />
-            </Box>
-          </Fade>
-
-          <Fade in={selectedPage === "Auth"} timeout={{enter: 300, exit: 300}} mountOnEnter unmountOnExit>
-            <Box sx={{ width: '100%' }}>
-              <AuthPage />
-            </Box>
-          </Fade>
         </Box>
-        <Box sx={{
-          ml: { xs: 0, sm: drawerOpen ? `${DRAWER_WIDTH}px` : 0 },
-          transition: theme => theme.transitions.create(['margin'], { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.leavingScreen }),
-        }}>
-          <SproutFooter />
-        </Box>
+        <SproutFooter />
 
       </Box>
     </ThemeProvider>
   );
 }
 
-export default App;
+function RequireAuth({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return user ? (children as never) : <Navigate to="/login" replace />;
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
