@@ -69,7 +69,7 @@ function AppContent() {
       <CssBaseline enableColorScheme />
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <SproutAppBar mode={mode} onToggleTheme={toggleTheme} onMenuClick={() => setDrawerOpen(prev => !prev)} onProfileMenuClick={handleNavigate} />
-        <SproutDrawer drawerWidth={DRAWER_WIDTH} open={drawerOpen} itemList={["Employees","Roles","Teams"]} onItemClick={handleNavigate} onClose={() => setDrawerOpen(false)} />
+        <SproutDrawer drawerWidth={DRAWER_WIDTH} open={drawerOpen} itemList={["Employees","Roles","Teams"]} onItemClick={handleNavigate} onClose={() => setDrawerOpen(false)} isLoggedIn={!!user} />
 
         <Box sx={(theme) => ({ ...theme.mixins.toolbar })} />
 

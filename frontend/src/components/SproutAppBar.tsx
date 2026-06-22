@@ -76,20 +76,29 @@ export default function SproutAppBar({mode, onToggleTheme, onMenuClick, onProfil
     <Menu sx={{ mt: "45px" }} anchorEl={anchorEl} open={isMenuOpen} onClose={handleMenuClose} id={menuId} keepMounted
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
           transformOrigin={{ vertical: "top", horizontal: "right" }}
-    >
-      <Box sx={{ p: 2, minWidth: 240 }}>
-        <Typography variant="subtitle1">Signed in as</Typography>
-        <Typography variant="h6">{user?.username}</Typography>
-      </Box>
-      <Divider />
-      <Box sx={{ p: 1, display: 'flex', gap: 1 }}>
-        <Button fullWidth variant="outlined" color="secondary" onClick={() => { handleMenuClose(); navigate('/employees'); }}>
-          Account
-        </Button>
-        <Button fullWidth variant="contained" onClick={() => { handleMenuClose(); logout(); navigate('/login'); }}>
-          Logout
-        </Button>
-      </Box>
+          slotProps={{ paper: { elevation: 0, sx: { bgcolor: "transparent", boxShadow: "none", overflow: "visible" } } }}>
+      <Card sx={{ width: 320 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Hey {user?.username}!
+          </Typography>
+
+          <Typography variant="body2" color="text.secondary">
+            Welcome! Do whatever you wanna do
+          </Typography>
+        </CardContent>
+
+        <Divider />
+
+        <CardActions sx={{ p: 2 }}>
+          <Button fullWidth variant="outlined" color="secondary" onClick={() => { handleMenuClose(); navigate('/employees'); }}>
+            Account
+          </Button>
+          <Button fullWidth variant="contained" onClick={() => { handleMenuClose(); logout(); navigate('/login'); }}>
+            Logout
+          </Button>
+        </CardActions>
+      </Card>
     </Menu>
   );
 
@@ -184,18 +193,10 @@ export default function SproutAppBar({mode, onToggleTheme, onMenuClick, onProfil
               <GitHubIcon fontSize="medium" />
             </IconButton>
 
-            {user ? (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="body2">Hi, {user.username}</Typography>
-                <IconButton size="large" edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
-                  <AccountCircle fontSize="medium" />
-                </IconButton>
-              </Box>
-            ) : (
-              <IconButton size="large" edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
-                <AccountCircle fontSize="medium" />
-              </IconButton>
-            )}
+
+            <IconButton size="large" edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
+              <AccountCircle fontSize="medium" />
+            </IconButton>
           </Box>
 
         </Toolbar>

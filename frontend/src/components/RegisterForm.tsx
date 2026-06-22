@@ -96,7 +96,8 @@ export default function RegisterForm() {
       </Box>
       <Typography variant="body2" color="text.secondary">
         By signing up you agree to the{" "}
-        <Link component="button" onClick={() => alert("Show TOS")}>
+        <Link component="button" type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); alert("Show TOS"); }}
+              sx={{ p: 0, minWidth: 0, lineHeight: 'inherit', verticalAlign: 'baseline' }}>
           Terms of Service
         </Link>
         .
