@@ -1,0 +1,19 @@
+info:
+  name: Delete Teams by ID
+  type: http
+  seq: 4
+
+http:
+  method: DELETE
+  url: "{{baseURL}}/teams/:id"
+  params:
+    - name: id
+      value: "4"
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

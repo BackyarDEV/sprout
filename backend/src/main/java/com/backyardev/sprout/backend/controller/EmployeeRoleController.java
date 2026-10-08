@@ -33,4 +33,16 @@ public class EmployeeRoleController {
         log.info("Adding role: {}", role);
         return service.addRole(role);
     }
+
+    @PutMapping("/{id}")
+    public EmployeeRole updateRole(@PathVariable Long id, @RequestBody EmployeeRole role) {
+        log.info("Updating role with id: {}", id);
+        return service.updateRole(id, role);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteRole(@PathVariable Long id) {
+        log.info("Deleting role with id: {}", id);
+        service.deleteRole(id);
+    }
 }

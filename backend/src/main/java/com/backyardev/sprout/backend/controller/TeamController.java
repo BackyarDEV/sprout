@@ -33,4 +33,10 @@ public class TeamController {
         log.info("Adding team: {}", team.getTeam());
         return service.addTeam(team);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteTeamByName(@PathVariable Long id) {
+        log.info("Deleting team with id: {}", id);
+        service.deleteTeamByName(id);
+    }
 }

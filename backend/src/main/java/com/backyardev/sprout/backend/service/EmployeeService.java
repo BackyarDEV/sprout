@@ -4,6 +4,9 @@ import com.backyardev.sprout.backend.entity.Employee;
 import com.backyardev.sprout.backend.entity.EmployeeRole;
 import com.backyardev.sprout.backend.entity.Skill;
 import com.backyardev.sprout.backend.entity.Team;
+import com.backyardev.sprout.backend.exception.EmployeeNotFoundException;
+import com.backyardev.sprout.backend.exception.RoleNotFoundException;
+import com.backyardev.sprout.backend.exception.TeamNotFoundException;
 import com.backyardev.sprout.backend.repository.EmployeeRepository;
 import com.backyardev.sprout.backend.repository.EmployeeRoleRepository;
 import com.backyardev.sprout.backend.repository.SkillRepository;
@@ -28,6 +31,14 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
+    public List<Employee> getAllByRoleId(Long roleId) {
+        if (!employeeRoleRepository.existsById(roleId)) {
+            throw new RoleNotFoundException("Role not found with id: " + roleId);
+        }
+
+        return employeeRepository.findAllByRoleId(roleId);
+    }
+
     public Employee save(Employee employee) {
         employee.setSkills(resolveSkills(employee.getSkills()));
         return employeeRepository.save(employee);
@@ -38,7 +49,8 @@ public class EmployeeService {
     }
 
     public void update(Long id, Employee employee) {
-        var existing = employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+        var existing = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + id));
         existing.setName(employee.getName());
         existing.setRole(employee.getRole());
         existing.setTeam(employee.getTeam());
@@ -46,7 +58,8 @@ public class EmployeeService {
     }
 
     public Employee updateSkills(Long id, Set<Skill> requestedSkills) {
-        var existing = employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+        var existing = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + id));
         existing.setSkills(resolveSkills(requestedSkills));
         return employeeRepository.save(existing);
     }
@@ -93,11 +106,25 @@ public class EmployeeService {
 
     public EmployeeRole getRoleByName(String role) {
         return employeeRoleRepository.findByRoleIgnoreCase(role)
-            .orElseThrow(() -> new RuntimeException("Role not found: " + role));
+            .orElseThrow(() -> new RoleNotFoundException("Role not found: " + role));
     }
 
     public EmployeeRole addRole(EmployeeRole role) {
         return employeeRoleRepository.save(role);
+    }
+
+    public EmployeeRole updateRole(Long id, EmployeeRole role) {
+        var existing = employeeRoleRepository.findById(id)
+            .orElseThrow(() -> new RoleNotFoundException("Role not found with id: " + id));
+        existing.setRole(role.getRole());
+        return employeeRoleRepository.save(existing);
+    }
+
+    public void deleteRole(Long id) {
+        if (!employeeRoleRepository.existsById(id)) {
+            throw new RoleNotFoundException("Role not found with id: " + id);
+        }
+        employeeRoleRepository.deleteById(id);
     }
 
     public List<Team> getTeams() {
@@ -106,10 +133,15 @@ public class EmployeeService {
 
     public Team getTeamByName(String team) {
         return teamRepository.findByTeamIgnoreCase(team)
-            .orElseThrow(() -> new RuntimeException("Role not found: " + team));
+            .orElseThrow(() -> new TeamNotFoundException("Team not found: " + team));
     }
 
     public Team addTeam(Team team) {
         return teamRepository.save(team);
     }
+
+    public void deleteTeamByName(Long id) {
+        teamRepository.deleteById(id);
+    }
+
 }

@@ -32,6 +32,12 @@ public class EmployeeController {
         return service.getAll();
     }
 
+    @GetMapping("/role/{roleId}")
+    public List<Employee> getAllByRoleId(@PathVariable Long roleId) {
+        log.info("Fetching employees with role id: {}", roleId);
+        return service.getAllByRoleId(roleId);
+    }
+
     @PutMapping("/{id}")
     public void update(
             @PathVariable Long id,

@@ -1,0 +1,19 @@
+services:
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    image: sprout-backend:1.0
+    ports:
+      - "8490:8490"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile
+    image: sprout-frontend:1.0
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
