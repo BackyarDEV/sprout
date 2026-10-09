@@ -1,5 +1,4 @@
 services:
-
   backend:
     build:
       context: .
@@ -7,6 +6,13 @@ services:
     image: sprout-backend:1.0
     ports:
       - "8490:8490"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://db:1433;databaseName=sprout;encrypt=true;trustServerCertificate=true
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: ${MSSQL_SA_PASSWORD}
+      SERVER_PORT: 8490
+    depends_on:
+      - db
 
   frontend:
     build:
@@ -17,3 +23,17 @@ services:
       - "5173:80"
     depends_on:
       - backend
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+volumes:
+  sqlserver-data:

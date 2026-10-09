@@ -1,53 +1,133 @@
--- This script runs after Hibernate has created or updated the entity tables.
--- MERGE statements make it safe to run on every application start.
-MERGE INTO employee_role (role) KEY (role) VALUES ('Backend Developer');
-MERGE INTO employee_role (role) KEY (role) VALUES ('Frontend Developer');
-MERGE INTO employee_role (role) KEY (role) VALUES ('Fullstack Developer');
-MERGE INTO employee_role (role) KEY (role) VALUES ('Designer');
+-- Seed roles
+IF NOT EXISTS (SELECT 1 FROM employee_role WHERE role = 'Backend Developer')
+INSERT INTO employee_role (role) VALUES ('Backend Developer');
 
-MERGE INTO team (team) KEY (team) VALUES ('Engineering');
-MERGE INTO team (team) KEY (team) VALUES ('Product');
+IF NOT EXISTS (SELECT 1 FROM employee_role WHERE role = 'Frontend Developer')
+INSERT INTO employee_role (role) VALUES ('Frontend Developer');
 
-MERGE INTO skills (skill_name) KEY (skill_name) VALUES ('Java');
-MERGE INTO skills (skill_name) KEY (skill_name) VALUES ('Spring Boot');
-MERGE INTO skills (skill_name) KEY (skill_name) VALUES ('ReactJS');
-MERGE INTO skills (skill_name) KEY (skill_name) VALUES ('Javascript');
-MERGE INTO skills (skill_name) KEY (skill_name) VALUES ('Typescript');
+IF NOT EXISTS (SELECT 1 FROM employee_role WHERE role = 'Fullstack Developer')
+INSERT INTO employee_role (role) VALUES ('Fullstack Developer');
 
-INSERT INTO employee (name)
-SELECT 'botn0ught'
-WHERE NOT EXISTS (SELECT 1 FROM employee WHERE name = 'botn0ught');
+IF NOT EXISTS (SELECT 1 FROM employee_role WHERE role = 'Designer')
+INSERT INTO employee_role (role) VALUES ('Designer');
 
-INSERT INTO employee (name)
-SELECT 'backyardev'
-WHERE NOT EXISTS (SELECT 1 FROM employee WHERE name = 'backyardev');
 
-MERGE INTO employee_role_links (employee_id, role_id) KEY (employee_id, role_id)
-SELECT employee.id, employee_role.id
-FROM employee, employee_role
-WHERE employee.name = 'botn0ught' AND employee_role.role = 'Fullstack Developer';
+-- Seed teams
+IF NOT EXISTS (SELECT 1 FROM team WHERE team = 'Engineering')
+INSERT INTO team (team) VALUES ('Engineering');
 
-MERGE INTO employee_team_links (employee_id, team_id) KEY (employee_id, team_id)
-SELECT employee.id, team.id
-FROM employee, team
-WHERE employee.name = 'botn0ught' AND team.team = 'Engineering';
+IF NOT EXISTS (SELECT 1 FROM team WHERE team = 'Product')
+INSERT INTO team (team) VALUES ('Product');
 
-MERGE INTO employee_skill_links (employee_id, skill_id) KEY (employee_id, skill_id)
-SELECT employee.id, skills.id
-FROM employee, skills
-WHERE employee.name = 'botn0ught' AND skills.skill_name IN ('Java', 'Spring Boot', 'Typescript', 'ReactJS');
 
-MERGE INTO employee_role_links (employee_id, role_id) KEY (employee_id, role_id)
-SELECT employee.id, employee_role.id
-FROM employee, employee_role
-WHERE employee.name = 'backyardev' AND employee_role.role = 'Backend Developer';
+-- Seed skills
+IF NOT EXISTS (SELECT 1 FROM skills WHERE skill_name = 'Java')
+INSERT INTO skills (skill_name) VALUES ('Java');
 
-MERGE INTO employee_team_links (employee_id, team_id) KEY (employee_id, team_id)
-SELECT employee.id, team.id
-FROM employee, team
-WHERE employee.name = 'backyardev' AND team.team = 'Engineering';
+IF NOT EXISTS (SELECT 1 FROM skills WHERE skill_name = 'Spring Boot')
+INSERT INTO skills (skill_name) VALUES ('Spring Boot');
 
-MERGE INTO employee_skill_links (employee_id, skill_id) KEY (employee_id, skill_id)
-SELECT employee.id, skills.id
-FROM employee, skills
-WHERE employee.name = 'backyardev' AND skills.skill_name = 'Java';
+IF NOT EXISTS (SELECT 1 FROM skills WHERE skill_name = 'ReactJS')
+INSERT INTO skills (skill_name) VALUES ('ReactJS');
+
+IF NOT EXISTS (SELECT 1 FROM skills WHERE skill_name = 'Javascript')
+INSERT INTO skills (skill_name) VALUES ('Javascript');
+
+IF NOT EXISTS (SELECT 1 FROM skills WHERE skill_name = 'Typescript')
+INSERT INTO skills (skill_name) VALUES ('Typescript');
+
+
+-- Seed employees
+IF NOT EXISTS (SELECT 1 FROM employee WHERE name = 'botn0ught')
+INSERT INTO employee (name) VALUES ('botn0ught');
+
+IF NOT EXISTS (SELECT 1 FROM employee WHERE name = 'backyardev')
+INSERT INTO employee (name) VALUES ('backyardev');
+
+
+-- botn0ught: Fullstack Developer
+IF NOT EXISTS (
+    SELECT 1
+    FROM employee_role_links l
+    JOIN employee e ON e.id = l.employee_id
+    JOIN employee_role r ON r.id = l.role_id
+    WHERE e.name = 'botn0ught' AND r.role = 'Fullstack Developer'
+)
+INSERT INTO employee_role_links (employee_id, role_id)
+SELECT e.id, r.id
+FROM employee e
+         CROSS JOIN employee_role r
+WHERE e.name = 'botn0ught' AND r.role = 'Fullstack Developer';
+
+
+-- botn0ught: Engineering
+IF NOT EXISTS (
+    SELECT 1
+    FROM employee_team_links l
+    JOIN employee e ON e.id = l.employee_id
+    JOIN team t ON t.id = l.team_id
+    WHERE e.name = 'botn0ught' AND t.team = 'Engineering'
+)
+INSERT INTO employee_team_links (employee_id, team_id)
+SELECT e.id, t.id
+FROM employee e
+         CROSS JOIN team t
+WHERE e.name = 'botn0ught' AND t.team = 'Engineering';
+
+
+-- botn0ught: Java, Spring Boot, TypeScript, ReactJS
+INSERT INTO employee_skill_links (employee_id, skill_id)
+SELECT e.id, s.id
+FROM employee e
+         CROSS JOIN skills s
+WHERE e.name = 'botn0ught'
+  AND s.skill_name IN ('Java', 'Spring Boot', 'Typescript', 'ReactJS')
+  AND NOT EXISTS (
+    SELECT 1
+    FROM employee_skill_links l
+    WHERE l.employee_id = e.id AND l.skill_id = s.id
+);
+
+
+-- backyardev: Backend Developer
+IF NOT EXISTS (
+    SELECT 1
+    FROM employee_role_links l
+    JOIN employee e ON e.id = l.employee_id
+    JOIN employee_role r ON r.id = l.role_id
+    WHERE e.name = 'backyardev' AND r.role = 'Backend Developer'
+)
+INSERT INTO employee_role_links (employee_id, role_id)
+SELECT e.id, r.id
+FROM employee e
+         CROSS JOIN employee_role r
+WHERE e.name = 'backyardev' AND r.role = 'Backend Developer';
+
+
+-- backyardev: Engineering
+IF NOT EXISTS (
+    SELECT 1
+    FROM employee_team_links l
+    JOIN employee e ON e.id = l.employee_id
+    JOIN team t ON t.id = l.team_id
+    WHERE e.name = 'backyardev' AND t.team = 'Engineering'
+)
+INSERT INTO employee_team_links (employee_id, team_id)
+SELECT e.id, t.id
+FROM employee e
+         CROSS JOIN team t
+WHERE e.name = 'backyardev' AND t.team = 'Engineering';
+
+
+-- backyardev: Java
+INSERT INTO employee_skill_links (employee_id, skill_id)
+SELECT e.id, s.id
+FROM employee e
+         CROSS JOIN skills s
+WHERE e.name = 'backyardev'
+  AND s.skill_name = 'Java'
+  AND NOT EXISTS (
+    SELECT 1
+    FROM employee_skill_links l
+    WHERE l.employee_id = e.id AND l.skill_id = s.id
+);
