@@ -3,7 +3,11 @@ import React, { createContext, useContext, useState } from "react";
 import type { AuthFormState } from "../types/Auth";
 import * as authService from "../services/authService";
 
-type User = { username: string } | null;
+type User = {
+  id?: number;
+  username: string;
+  role?: string;
+} | null;
 
 type AuthContextType = {
   user: User;
@@ -31,8 +35,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       const res = await authService.login(form);
+
       localStorage.setItem("token", res.token);
       localStorage.setItem("username", res.user.username);
+      localStorage.setItem("role", res.user.role);
+
       setUser(res.user);
     } finally {
       setLoading(false);
@@ -42,10 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (form: AuthFormState) => {
     setLoading(true);
     try {
-      const res = await authService.register(form);
-      localStorage.setItem("token", res.token);
-      localStorage.setItem("username", res.user.username);
-      setUser(res.user);
+      await authService.register(form);
     } finally {
       setLoading(false);
     }

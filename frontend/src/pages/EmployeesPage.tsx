@@ -5,10 +5,13 @@ import {employeeService} from "../services/employeeService.ts";
 import EmployeeTable from "../components/EmployeeTable";
 import EmployeeForm from "../components/EmployeeForm";
 import Typography from "@mui/material/Typography";
+import {useAuth} from "../context/AuthContext";
 
 export default function EmployeesPage() {
   // Commons
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const {user} = useAuth();
+  const isAdmin = user?.role === "ADMIN";
 
   // Search
   const [search, setSearch] = useState("");
@@ -81,33 +84,43 @@ export default function EmployeesPage() {
       </Container>
       <Container maxWidth="md">
 
-        <Paper elevation={4}>
-          <EmployeeForm
-            name={name}
-            role={role}
-            team={team}
-            onNameChange={setName}
-            onRoleChange={setRole}
-            onTeamChange={setTeam}
-            onSubmit={addEmployee}
-          />
-        </Paper>
+        {isAdmin && (
+          <Paper elevation={4}>
+            <EmployeeForm
+              name={name}
+              role={role}
+              team={team}
+              onNameChange={setName}
+              onRoleChange={setRole}
+              onTeamChange={setTeam}
+              onSubmit={addEmployee}
+            />
+          </Paper>
+        )}
 
         <Paper elevation={4}>
           <EmployeeTable
             employees={filteredEmployees}
-            onDelete={deleteEmployee}
-            onUpdateEmployee={async (employeeId, employee) => {
-              await employeeService.updateEmployee(employeeId, employee);
-              await loadEmployees();
-            }}
-            onUpdateSkills={async (employeeId, skills) => {
-              await employeeService.updateEmployeeSkills(
-                employeeId,
-                skills.map(skillName => ({ skillName }))
-              );
-              await loadEmployees();
-            }}
+            onDelete={isAdmin ? deleteEmployee : undefined}
+            onUpdateEmployee={
+              isAdmin
+                ? async (employeeId, employee) => {
+                  await employeeService.updateEmployee(employeeId, employee);
+                  await loadEmployees();
+                }
+                : undefined
+            }
+            onUpdateSkills={
+              isAdmin
+                ? async (employeeId, skills) => {
+                  await employeeService.updateEmployeeSkills(
+                    employeeId,
+                    skills.map(skillName => ({skillName}))
+                  );
+                  await loadEmployees();
+                }
+                : undefined
+            }
           />
         </Paper>
 

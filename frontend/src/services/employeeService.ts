@@ -1,12 +1,5 @@
 import type {Employee, Skill, EmployeeRole, Team} from "../types/Employee";
-
-// const API_BASE_URL =
-//   import.meta.env.VITE_API_BASE_URL ??
-//   `${window.location.protocol}//${window.location.hostname}:8490`;
-
-// const EMPLOYEES_URL = new URL("/api/employees", API_BASE_URL).toString();
-// const ROLES_URL = new URL("/api/roles", API_BASE_URL).toString();
-// const TEAMS_URL = new URL("/api/teams", API_BASE_URL).toString();
+import { apiFetch } from "./api";
 
 const EMPLOYEES_URL = "/api/employees";
 const ROLES_URL = "/api/roles";
@@ -19,7 +12,7 @@ export const employeeService = {
     employee: Omit<Employee, "id">
   ): Promise<Employee> {
 
-    const response = await fetch(
+    const response = await apiFetch(
       EMPLOYEES_URL,
       {
         method: "POST",
@@ -35,13 +28,13 @@ export const employeeService = {
 
   async getEmployees(): Promise<Employee[]> {
     const response =
-      await fetch(EMPLOYEES_URL);
+      await apiFetch(EMPLOYEES_URL);
 
     return response.json();
   },
 
   async getEmployeesByRoleId(roleId: number): Promise<Employee[]> {
-    const response = await fetch(`${EMPLOYEES_URL}/role/${roleId}`);
+    const response = await apiFetch(`${EMPLOYEES_URL}/role/${roleId}`);
     return response.json();
   },
 
@@ -50,7 +43,7 @@ export const employeeService = {
     employee: Omit<Employee, "id">
   ): Promise<void> {
 
-    await fetch(
+    await apiFetch(
       `${EMPLOYEES_URL}/${id}`,
       {
         method: "PUT",
@@ -66,7 +59,7 @@ export const employeeService = {
     id: number
   ): Promise<void> {
 
-    await fetch(
+    await apiFetch(
       `${EMPLOYEES_URL}/${id}`,
       {
         method: "DELETE"
@@ -79,7 +72,7 @@ export const employeeService = {
     employeeRole: Omit<EmployeeRole, "id">
   ): Promise<EmployeeRole> {
 
-    const response = await fetch(
+    const response = await apiFetch(
       ROLES_URL,
       {
         method: "POST",
@@ -94,7 +87,7 @@ export const employeeService = {
   },
 
   async getEmployeeRoles(): Promise<EmployeeRole[]> {
-    const response = await fetch(ROLES_URL);
+    const response = await apiFetch(ROLES_URL);
     return response.json();
   },
 
@@ -103,7 +96,7 @@ export const employeeService = {
     employeeRole: Omit<EmployeeRole, "id">
   ): Promise<void> {
 
-    await fetch(
+    await apiFetch(
       `${ROLES_URL}/${id}`,
       {
         method: "PUT",
@@ -119,7 +112,7 @@ export const employeeService = {
     id: number
   ): Promise<void> {
 
-    await fetch(
+    await apiFetch(
       `${ROLES_URL}/${id}`,
       {
         method: "DELETE"
@@ -130,51 +123,35 @@ export const employeeService = {
   // Teams
   async createTeam(
     team: Omit<Team, "id">
-  ): Promise<EmployeeRole> {
-
-    const response = await fetch(
-      ROLES_URL,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(team)
-      }
-    );
+  ): Promise<Team> {
+    const response = await apiFetch(TEAMS_URL, {
+      method: "POST",
+      body: JSON.stringify(team),
+    });
 
     return response.json();
   },
 
   async getTeams(): Promise<Team[]> {
-    const response = await fetch(TEAMS_URL);
+    const response = await apiFetch(TEAMS_URL);
     return response.json();
   },
 
-  // Teams
   async updateTeam(
+    id: number,
     team: Omit<Team, "id">
-  ): Promise<EmployeeRole> {
-
-    const response = await fetch(
-      ROLES_URL,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(team)
-      }
-    );
-
-    return response.json();
+  ): Promise<void> {
+    await apiFetch(`${TEAMS_URL}/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(team),
+    });
   },
 
   async deleteTeam(
     id: number
   ): Promise<void> {
 
-    await fetch(
+    await apiFetch(
       `${TEAMS_URL}/${id}`,
       {
         method: "DELETE"
@@ -187,7 +164,7 @@ export const employeeService = {
     id: number,
     skills: Skill[]
   ): Promise<Employee> {
-    const response = await fetch(
+    const response = await apiFetch(
       `${EMPLOYEES_URL}/${id}/skills`,
       {
         method: "PUT",

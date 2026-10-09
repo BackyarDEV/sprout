@@ -30,13 +30,13 @@ import {employeeService} from "../services/employeeService.ts";
 
 interface EmployeeTableProps {
   employees: Employee[];
-  onDelete: (id: number) => void;
-  onUpdateEmployee: (employeeId: number, employee: {
+  onDelete?: (id: number) => void;
+  onUpdateEmployee?: (employeeId: number, employee: {
     name: string;
     role: EmployeeRole | undefined;
     team: Team | undefined;
   }) => Promise<void>;
-  onUpdateSkills: (employeeId: number, skills: string[]) => Promise<void>;
+  onUpdateSkills?: (employeeId: number, skills: string[]) => Promise<void>;
 }
 
 const normalizeSkillNames = (names: string[]) => {
@@ -300,6 +300,7 @@ export default function EmployeeTable({
 
     const roleObj = nextRole ? roles.find(r => r.role === nextRole) : undefined;
     const teamObj = nextTeam ? teams.find(t => t.team === nextTeam) : undefined;
+    if (!onUpdateEmployee) return;
     await onUpdateEmployee(employee.id, {
       name: nextName,
       role: roleObj,
@@ -418,6 +419,7 @@ export default function EmployeeTable({
       return;
     }
 
+    if (!onUpdateSkills) return;
     await onUpdateSkills(employee.id, committedSkills);
 
     setEditingSkillsEmployeeId(null);
@@ -570,7 +572,7 @@ export default function EmployeeTable({
           </Box>
         </Box>
 
-        {employeeBeingEdited && (
+        {employeeBeingEdited && onUpdateSkills && (
           // add skill in-line 'form'
           <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: "wrap", alignItems: "center"}}>
             <TextField
@@ -603,23 +605,42 @@ export default function EmployeeTable({
   };
 
   const renderSkillActions = (employee: Employee) => {
+    if (!onUpdateSkills) {
+      return null;
+    }
+
     const employeeBeingEdited = editingSkillsEmployeeId === employee.id;
 
     return (
-      <Stack direction="row" spacing={1} sx={{justifyContent: "space-around"}}>
+      <Stack direction="row" spacing={1} sx={{ justifyContent: "space-around" }}>
         {employeeBeingEdited ? (
           <>
-            <IconButton size="small" onClick={() => { void confirmSkills(employee); }} aria-label="Confirm skills changes" sx={chipLikeIconButtonSx}>
-              <CheckIcon/>
+            <IconButton
+              size="small"
+              onClick={() => { void confirmSkills(employee); }}
+              aria-label="Confirm skills changes"
+              sx={chipLikeIconButtonSx}
+            >
+              <CheckIcon />
             </IconButton>
 
-            <IconButton size="small" onClick={cancelSkillsEdit} aria-label="Cancel skills changes" sx={chipLikeIconButtonSx}>
-              <CloseIcon/>
+            <IconButton
+              size="small"
+              onClick={cancelSkillsEdit}
+              aria-label="Cancel skills changes"
+              sx={chipLikeIconButtonSx}
+            >
+              <CloseIcon />
             </IconButton>
           </>
         ) : (
-          <IconButton size="small" onClick={() => beginSkillEdit(employee)} aria-label="Edit skills" sx={chipLikeIconButtonSx}>
-            <EditIcon/>
+          <IconButton
+            size="small"
+            onClick={() => beginSkillEdit(employee)}
+            aria-label="Edit skills"
+            sx={chipLikeIconButtonSx}
+          >
+            <EditIcon />
           </IconButton>
         )}
       </Stack>
@@ -766,13 +787,28 @@ export default function EmployeeTable({
                           </>
                         ) : (
                           <>
-                            <IconButton size="small" aria-label="Edit employee" onClick={() => beginEmployeeEdit(employee)} sx={plainIconButtonSx}>
-                              <EditIcon/>
-                            </IconButton>
+                            {onUpdateEmployee && (
+                              <IconButton
+                                size="small"
+                                aria-label="Edit employee"
+                                onClick={() => beginEmployeeEdit(employee)}
+                                sx={plainIconButtonSx}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            )}
 
-                            <IconButton size="small" color="error" aria-label="Delete employee" onClick={() => onDelete(employee.id)} sx={plainIconButtonSx}>
-                              <DeleteIcon/>
-                            </IconButton>
+                            {onDelete && (
+                              <IconButton
+                                size="small"
+                                color="error"
+                                aria-label="Delete employee"
+                                onClick={() => onDelete(employee.id)}
+                                sx={plainIconButtonSx}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            )}
                           </>
                         )}
                       </Stack>

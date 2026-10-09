@@ -24,6 +24,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 import type {Employee, EmployeeRole} from "../types/Employee";
 import {employeeService} from "../services/employeeService";
+import {useAuth} from "../context/AuthContext";
 
 export default function RolesPage() {
   const [roles, setRoles] = useState<EmployeeRole[]>([]);
@@ -33,6 +34,8 @@ export default function RolesPage() {
   const [expandedRoleIds, setExpandedRoleIds] = useState<Set<number>>(new Set());
   const [employeesByRoleId, setEmployeesByRoleId] = useState<Record<number, Employee[]>>({});
   const [loadingRoleIds, setLoadingRoleIds] = useState<Set<number>>(new Set());
+  const {user} = useAuth();
+  const isAdmin = user?.role === "ADMIN";
 
   const loadRoles = async () => {
     const result = await employeeService.getEmployeeRoles();
@@ -134,29 +137,31 @@ export default function RolesPage() {
       </Typography>
 
       <Container maxWidth="md">
-        <Paper elevation={4}>
-          <Paper elevation={0} sx={{p: 3, mb: 3, bgcolor: "primary.main"}}>
-            <Stack spacing={3}>
-              <TextField
-                label="Role Name"
-                value={role}
-                onChange={(event) => setRole(event.target.value)}
-                error={role.trim().length > 0 && !isRoleValid}
-                helperText={role.trim().length > 0 && !isRoleValid ? "Minimum 3 characters" : ""}
-                fullWidth
-              />
+        {isAdmin && (
+          <Paper elevation={4}>
+            <Paper elevation={0} sx={{p: 3, mb: 3, bgcolor: "primary.main"}}>
+              <Stack spacing={3}>
+                <TextField
+                  label="Role Name"
+                  value={role}
+                  onChange={(event) => setRole(event.target.value)}
+                  error={role.trim().length > 0 && !isRoleValid}
+                  helperText={role.trim().length > 0 && !isRoleValid ? "Minimum 3 characters" : ""}
+                  fullWidth
+                />
 
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={addRole}
-                disabled={!isRoleValid}
-              >
-                Add Role
-              </Button>
-            </Stack>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={addRole}
+                  disabled={!isRoleValid}
+                >
+                  Add Role
+                </Button>
+              </Stack>
+            </Paper>
           </Paper>
-        </Paper>
+        )}
 
         <Paper elevation={4}>
           <TableContainer>
@@ -202,32 +207,47 @@ export default function RolesPage() {
                         />
                       ) : employeeRole.role}
                     </TableCell>
-                    <TableCell align="center">
-                      {editingRoleId === employeeRole.id ? (
-                        <>
-                          <IconButton
-                            size="small"
-                            aria-label="Save role changes"
-                            onClick={() => void saveRoleEdit(employeeRole)}
-                            disabled={!isEditingRoleValid}
-                          >
-                            <CheckIcon />
-                          </IconButton>
-                          <IconButton size="small" aria-label="Cancel role changes" onClick={cancelRoleEdit}>
-                            <CloseIcon />
-                          </IconButton>
-                        </>
-                      ) : (
-                        <>
-                          <IconButton size="small" aria-label="Edit role" onClick={() => beginRoleEdit(employeeRole)}>
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton size="small" color="error" aria-label="Delete role" onClick={() => void deleteRole(employeeRole)}>
-                            <DeleteIcon />
-                          </IconButton>
-                        </>
-                      )}
-                    </TableCell>
+                      <TableCell align="center">
+                        {isAdmin && (
+                          editingRoleId === employeeRole.id ? (
+                            <>
+                              <IconButton
+                                size="small"
+                                aria-label="Save role changes"
+                                onClick={() => void saveRoleEdit(employeeRole)}
+                                disabled={!isEditingRoleValid}
+                              >
+                                <CheckIcon />
+                              </IconButton>
+                              <IconButton
+                                size="small"
+                                aria-label="Cancel role changes"
+                                onClick={cancelRoleEdit}
+                              >
+                                <CloseIcon />
+                              </IconButton>
+                            </>
+                          ) : (
+                            <>
+                              <IconButton
+                                size="small"
+                                aria-label="Edit role"
+                                onClick={() => beginRoleEdit(employeeRole)}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton
+                                size="small"
+                                color="error"
+                                aria-label="Delete role"
+                                onClick={() => void deleteRole(employeeRole)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </>
+                          )
+                        )}
+                      </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell colSpan={3} sx={{py: 0}}>
