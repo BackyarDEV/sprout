@@ -23,6 +23,8 @@ services:
     image: sprout-frontend:1.0
     ports:
       - "5173:80"
+    environment:
+      NGINX_RESOLVER: ${NGINX_RESOLVER}
     depends_on:
       - backend
 
