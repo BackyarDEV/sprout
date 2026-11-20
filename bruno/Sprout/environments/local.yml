@@ -2,5 +2,4 @@ name: local
 variables:
   - name: baseURL
     value: http://localhost:8490/api
-  - name: token
-    value: eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzcHJvdXQiLCJzdWIiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImV4cCI6MTc5MTU3NjQ2MiwiaWF0IjoxNzkxNTcyODYyfQ.t5NOopGR3KgetRyLYiSD2j7as6ppBFgbRp0xrlfWuLU
+    description: ""
